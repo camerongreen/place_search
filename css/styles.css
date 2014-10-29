@@ -1,0 +1,11 @@
+body {
+  padding: 1em;
+}
+
+#map {
+  margin-bottom: 2em;
+}
+
+form select {
+  margin-right: 1ex;
+}

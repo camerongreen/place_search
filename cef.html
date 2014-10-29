@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<head>
+  <title>CEF Visualisation</title>
+  <link rel="stylesheet" type="text/css" href="css/styles.css"/>
+  <link rel="stylesheet" type="text/css" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css"/>
+</head>
+<body>
+<form id="mapForm" class="form-inline" role="form">
+  <div class="form-group">
+    <label for="column">Metric:</label>
+    <select id="column" class="form-control">
+      <option value="7">Alumni</option>
+      <option value="8">Agreements</option>
+      <option value="6">Collaborations</option>
+      <option value="5">Grant</option>
+      <option value="4">Publications</option>
+      <option value="3">Students</option>
+      <option value="9" selected="selected">Total</option>
+    </select>
+  </div>
+  <label for="region">Region:</label>
+  <select id="region" class="form-control">
+    <option value="002">Africa</option>
+    <option value="142">Asia</option>
+    <option value="150">Europe</option>
+    <option value="009">Oceania</option>
+    <option value="021">North America</option>
+    <option value="005">South America</option>
+    <option value="013">Central America</option>
+    <option value="0" selected="selected">All</option>
+  </select>
+  </div>
+  <button type="button" id="show-map" class="btn btn-default">Show</button>
+</form>
+<div id="map">
+</div>
+<!-- /#map -->
+<div id="data-table">
+</div>
+<!-- /#data-table -->
+<script src="http://code.jquery.com/jquery-latest.js"></script>
+<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+<script src="https://www.google.com/jsapi"></script>
+<script src="js/cef_script.js"></script>
+</body>
+</html>
