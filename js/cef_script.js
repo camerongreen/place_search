@@ -9,6 +9,7 @@ var UQL = UQL || {};
 
 UQL.cefDataTable = null;
 UQL.chart = null;
+UQL.spreadSheet = 'https://spreadsheets.google.com/tq?key=1-RhbWPKweWTnHClvAclHn2t_4x33Q-gzcmSqBwRTxfY';
 UQL.columns = {
   country: 0,
   region: 1,
@@ -29,8 +30,7 @@ UQL.loadVisualisations = function () {
   UQL.chart = new google.visualization.GeoChart(document.getElementById('map'));
   google.visualization.events.addListener(UQL.chart, 'select', UQL.showCountryInfo);
 
-  new google.visualization.Query('https://spreadsheets.google.com/tq?key=1-RhbWPKweWTnHClvAclHn2t_4x33Q-gzcmSqBwRTxfY').
-    send(UQL.drawVisualisations);
+  new google.visualization.Query(UQL.spreadSheet).send(UQL.drawVisualisations);
 };
 
 /**
@@ -44,6 +44,7 @@ UQL.drawVisualisations = function (response) {
 
   UQL.drawRegionsMap(UQL.columns.total);
   UQL.drawDataTable();
+  UQL.drawToolbar();
 };
 
 /**
@@ -125,6 +126,24 @@ UQL.drawDataTable = function () {
   var chart = new google.visualization.Table(document.getElementById('data-table'));
 
   chart.draw(UQL.cefDataTable, options);
+};
+
+/**
+ * Draw the toolbar
+ */
+UQL.drawToolbar = function() {
+  var components = [
+    {type: 'html', datasource: UQL.spreadSheet},
+    {type: 'csv', datasource: UQL.spreadSheet}
+  ];
+
+  var container = document.getElementById('toolbar-div');
+  google.visualization.drawToolbar(container, components);
+
+  // dodgy hacks to make it look bootstrappy
+  $('#toolbar-div > span > div').removeClass('charts-menu-button').addClass('form-control').addClass('btn').addClass('btn-success');
+  $('#toolbar-div div').removeClass('button-inner-box').removeClass('charts-menu-button-inner-box').removeClass('charts-menu-button-outer-box');
+  $('#toolbar-div > span span').html('Export data');
 };
 
 // go ...

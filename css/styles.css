@@ -6,6 +6,7 @@ body {
   margin-bottom: 2em;
 }
 
+form button,
 form select {
   margin-right: 1ex;
 }
