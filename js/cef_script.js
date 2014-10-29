@@ -53,7 +53,24 @@ UQL.drawVisualisations = function (response) {
  */
 UQL.showCountryInfo = function (eventData) {
   var countryInfo = UQL.getCountryInfo(eventData.region);
-  console.log(countryInfo);
+  var ignoreColumns = ['Country'];
+  var display = '<table>';
+  //display += '<tr><th>Metric</th><th>&nbsp;</th><th>Value</th></tr>';
+  for (var i in countryInfo) {
+    if (countryInfo.hasOwnProperty(i) && (ignoreColumns.indexOf(i) === -1)) {
+      display += '<tr>';
+      display += '<td>' + i + ' : </td><td>&nbsp;</td><td>' + countryInfo[i] + '</td>'
+      display += '</tr>';
+    }
+  }
+  display += '</table>';
+
+  var newDiv = $('<div>');
+  newDiv.html(display);
+  newDiv.dialog({
+    minWidth: 400,
+    title: countryInfo.Country
+  });
 };
 
 /**
@@ -62,8 +79,10 @@ UQL.showCountryInfo = function (eventData) {
 UQL.getCountryInfo = function () {
   var select = UQL.chart.getSelection();
   var data = {};
-  for (var i = 0, l = UQL.cefDataTable.getNumberOfColumns(); i < l; i++) {
-    data[UQL.cefDataTable.getColumnLabel(i)] = UQL.cefDataTable.getValue(select[0].row, i);
+  if (select.length > 0) {
+    for (var i = 0, l = UQL.cefDataTable.getNumberOfColumns(); i < l; i++) {
+      data[UQL.cefDataTable.getColumnLabel(i)] = UQL.cefDataTable.getValue(select[0].row, i);
+    }
   }
   return data;
 };
@@ -78,8 +97,7 @@ UQL.getCountryInfo = function () {
  * @param numeric region to display on map
  */
 UQL.drawRegionsMap = function (column, region) {
-  var options = {
-  };
+  var options = {};
   if (typeof region !== 'undefined') {
     options.region = region;
   }
