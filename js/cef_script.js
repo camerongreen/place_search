@@ -54,13 +54,13 @@ UQL.drawVisualisations = function (response) {
  */
 UQL.showCountryInfo = function (eventData) {
   var countryInfo = UQL.getCountryInfo(eventData.region);
-  var ignoreColumns = ['Country'];
+  var ignoreColumns = ['Country', 'Region'];
   var display = '<table>';
   //display += '<tr><th>Metric</th><th>&nbsp;</th><th>Value</th></tr>';
   for (var i in countryInfo) {
     if (countryInfo.hasOwnProperty(i) && (ignoreColumns.indexOf(i) === -1)) {
       display += '<tr>';
-      display += '<td>' + i + ' : </td><td>&nbsp;</td><td>' + countryInfo[i] + '</td>'
+      display += '<td>' + i + ' : </td><td>&nbsp;</td><td>' + countryInfo[i].toLocaleString() + '</td>'
       display += '</tr>';
     }
   }
