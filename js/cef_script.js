@@ -42,8 +42,8 @@ UQL.loadVisualisations = function () {
 UQL.drawVisualisations = function (response) {
   UQL.cefDataTable = response.getDataTable();
 
-  UQL.drawRegionsMap(UQL.columns.total);
-  UQL.drawDataTable();
+  UQL.drawRegionsMap(UQL.cefDataTable, UQL.columns.total);
+  UQL.drawDataTable(UQL.cefDataTable);
   UQL.drawToolbar();
 };
 
@@ -53,7 +53,7 @@ UQL.drawVisualisations = function (response) {
  * @param {Object}
  */
 UQL.showCountryInfo = function (eventData) {
-  var countryInfo = UQL.getCountryInfo(eventData.region);
+  var countryInfo = UQL.getCountryInfo(UQL.cefDataTable);
   var ignoreColumns = ['Country', 'Region'];
   var display = '<table>';
   //display += '<tr><th>Metric</th><th>&nbsp;</th><th>Value</th></tr>';
@@ -76,13 +76,15 @@ UQL.showCountryInfo = function (eventData) {
 
 /**
  * Function to retrieve information about a country given its name
+ *
+ * @param {Object}  dataTable
  */
-UQL.getCountryInfo = function () {
+UQL.getCountryInfo = function (dataTable) {
   var select = UQL.chart.getSelection();
   var data = {};
   if (select.length > 0) {
-    for (var i = 0, l = UQL.cefDataTable.getNumberOfColumns(); i < l; i++) {
-      data[UQL.cefDataTable.getColumnLabel(i)] = UQL.cefDataTable.getValue(select[0].row, i);
+    for (var i = 0, l = dataTable.getNumberOfColumns(); i < l; i++) {
+      data[dataTable.getColumnLabel(i)] = dataTable.getValue(select[0].row, i);
     }
   }
   return data;
@@ -91,18 +93,16 @@ UQL.getCountryInfo = function () {
 /**
  * Shows a google GeoChart visualisation to the '#map' html element
  *
- * Globals:
- *   UQL.cefDataTable
- *
+ * @param {Object} dataTable
  * @param Integer column to display from spreadsheet
  * @param numeric region to display on map
  */
-UQL.drawRegionsMap = function (column, region) {
+UQL.drawRegionsMap = function (dataTable, column, region) {
   var options = {};
   if (typeof region !== 'undefined') {
     options.region = region;
   }
-  var editedDataTable = UQL.cefDataTable.clone();
+  var editedDataTable = dataTable.clone();
   var numColumns = 10;
 
   for (var i = numColumns - 1; i > 0; i--) {
@@ -117,15 +117,14 @@ UQL.drawRegionsMap = function (column, region) {
 /**
  * Shows a google Table visualisation to the '#data-table' html element
  *
- * Globals:
- *   UQL.cefDataTable
+ * @param {Object} dataTable
  */
-UQL.drawDataTable = function () {
+UQL.drawDataTable = function (dataTable) {
   var options = {};
 
   var chart = new google.visualization.Table(document.getElementById('data-table'));
 
-  chart.draw(UQL.cefDataTable, options);
+  chart.draw(dataTable, options);
 };
 
 /**
@@ -158,9 +157,9 @@ $('#show-map').click(function () {
   var region = $("#region").val();
 
   if (parseInt(region, 10) !== 0) {
-    UQL.drawRegionsMap(column, region)
+    UQL.drawRegionsMap(UQL.cefDataTable, column, region)
   } else {
-    UQL.drawRegionsMap(column)
+    UQL.drawRegionsMap(UQL.cefDataTable, column)
   }
 });
 
