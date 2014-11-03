@@ -7,7 +7,8 @@ body {
   width: 100%;
 }
 
-#map {
+#cef-map,
+#pef-map {
   width: 100%;
   height: 650px;
   margin-bottom: 2em;

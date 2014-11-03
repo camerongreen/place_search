@@ -8,42 +8,41 @@
 // create a quasi namespace
 var UQL = UQL || {};
 
-UQL.pefDataTable = null;
-UQL.map = null;
-UQL.chart = null;
-UQL.spreadSheet = 'https://spreadsheets.google.com/tq?key=1eQqryMh3q6OwIMKfT5VPkLXvYJEFyPt4klwuVoUTpBA';
-UQL.markerImage = 'http://labs.google.com/ridefinder/images/mm_20_white.png';
-UQL.mapZoom = 3;
-UQL.mapZoomed = 7;
-UQL.lineColour = '#FFFFFF';
-UQL.lineOpacity = .5;
-
-UQL.hideColumns = [
-  'Lat',
-  'Lng',
-  'Geo Address'
-];
-
-UQL.address = {
-  lat: -27.497516,
-  lng: 153.013206,
-  title: 'The University of Queensland',
-  details: {
-    campus: 'St Lucia',
-    country: 'Australia'
+UQL.pef = {
+  dataTable: null,
+  map: null,
+  chart: null,
+  spreadSheet: 'https://spreadsheets.google.com/tq?key=1eQqryMh3q6OwIMKfT5VPkLXvYJEFyPt4klwuVoUTpBA',
+  markerImage: 'http://labs.google.com/ridefinder/images/mm_20_white.png',
+  mapZoom: 3,
+  mapZoomed: 7,
+  lineColour: '#FFFFFF',
+  lineOpacity: .5,
+  hideColumns: [
+    'Lat',
+    'Lng',
+    'Geo Address'
+  ],
+  address: {
+    lat: -27.497516,
+    lng: 153.013206,
+    title: 'The University of Queensland',
+    details: {
+      campus: 'St Lucia',
+      country: 'Australia'
+    }
+  },
+  mapCentre: {
+    lat: 2,
+    lng: 135
   }
-};
-
-UQL.mapCentre = {
-  lat: 2,
-  lng: 135
 };
 
 /**
  * Loads a google spreadsheet
  */
-UQL.loadVisualisations = function () {
-  new google.visualization.Query(UQL.spreadSheet).send(UQL.drawVisualisations);
+UQL.pef.loadVisualisations = function () {
+  new google.visualization.Query(UQL.pef.spreadSheet).send(UQL.pef.drawVisualisations);
 };
 
 /**
@@ -52,13 +51,13 @@ UQL.loadVisualisations = function () {
  *
  * @param response
  */
-UQL.drawVisualisations = function (response) {
-  UQL.pefDataTable = response.getDataTable();
+UQL.pef.drawVisualisations = function (response) {
+  UQL.pef.dataTable = response.getDataTable();
 
-  UQL.drawMap();
-  UQL.drawConnections(UQL.map, UQL.pefDataTable);
-  UQL.drawDataTable(UQL.pefDataTable);
-  UQL.drawToolbar(UQL.spreadSheet);
+  UQL.pef.drawMap();
+  UQL.pef.drawConnections(UQL.pef.map, UQL.pef.dataTable);
+  UQL.pef.drawDataTable(UQL.pef.dataTable);
+  UQL.pef.drawToolbar(UQL.pef.spreadSheet);
 };
 
 /**
@@ -67,21 +66,21 @@ UQL.drawVisualisations = function (response) {
  * @param {Object}  map
  * @param {Object}  dataTable
  */
-UQL.drawConnections = function (map, dataTable) {
-  UQL.addPlacemark(map, UQL.address.lat, UQL.address.lng, UQL.address.title, UQL.address.details);
+UQL.pef.drawConnections = function (map, dataTable) {
+  UQL.pef.addPlacemark(map, UQL.pef.address.lat, UQL.pef.address.lng, UQL.pef.address.title, UQL.pef.address.details);
 
   for (var r = 0, nr = dataTable.getNumberOfRows(); r < nr; r++) {
-    var row = UQL.getRow(dataTable, r);
+    var row = UQL.pef.getRow(dataTable, r);
     var scale = .1;
-    UQL.drawLine(map, UQL.address.lat, UQL.address.lng, row.Lat, row.Lng, scale);
-    UQL.addPlacemark(map, row.Lat, row.Lng, row['Partner Name'], row);
+    UQL.pef.drawLine(map, UQL.pef.address.lat, UQL.pef.address.lng, row.Lat, row.Lng, scale);
+    UQL.pef.addPlacemark(map, row.Lat, row.Lng, row['Partner Name'], row);
   }
 };
 
 /**
  * gets a Row into an object for easier use
  */
-UQL.getRow = function (dataTable, rowNum) {
+UQL.pef.getRow = function (dataTable, rowNum) {
   var returnVal = {};
   for (var c = 0, nc = dataTable.getNumberOfColumns(); c < nc; c++) {
     var columnName = dataTable.getColumnLabel(c);
@@ -104,9 +103,9 @@ UQL.getRow = function (dataTable, rowNum) {
  * @param title
  * @param {Object} display  Display in popup
  */
-UQL.addPlacemark = function (map, lat, lng, title, display) {
+UQL.pef.addPlacemark = function (map, lat, lng, title, display) {
   var myLatLng = new google.maps.LatLng(lat, lng);
-  var icon = new google.maps.MarkerImage(UQL.markerImage);
+  var icon = new google.maps.MarkerImage(UQL.pef.markerImage);
   var marker = new google.maps.Marker({
     map: map,
     position: myLatLng,
@@ -114,7 +113,7 @@ UQL.addPlacemark = function (map, lat, lng, title, display) {
     icon: icon
   });
 
-  var infoWindow = UQL.makeInfoWindow(title, display);
+  var infoWindow = UQL.pef.makeInfoWindow(title, display);
 
   google.maps.event.addListener(marker, 'click', function () {
     infoWindow.open(map, marker);
@@ -122,17 +121,17 @@ UQL.addPlacemark = function (map, lat, lng, title, display) {
 };
 
 /**
-/**
+ /**
  * Add a placemark to the map
  *
  * @param title
  * @param {Object} display  Display in popup
  */
-UQL.makeInfoWindow = function (title, display) {
-  var hideColumns = UQL.hideColumns.slice(0);
+UQL.pef.makeInfoWindow = function (title, display) {
+  var hideColumns = UQL.pef.hideColumns.slice(0);
   hideColumns.push('Partner Name');
 
-  var content = '<div class="popup-content">' +
+  var content = '<div class="pef-popup-content">' +
     '<h3>' + title + '</h3>' +
     '<table class="table" role="table">';
 
@@ -162,7 +161,7 @@ UQL.makeInfoWindow = function (title, display) {
  * @param eLng
  * @param scale 0.1 - 1 for thickness of line
  */
-UQL.drawLine = function (map, sLat, sLng, eLat, eLng, scale) {
+UQL.pef.drawLine = function (map, sLat, sLng, eLat, eLng, scale) {
   var line = [
     new google.maps.LatLng(sLat, sLng),
     new google.maps.LatLng(eLat, eLng)
@@ -172,8 +171,8 @@ UQL.drawLine = function (map, sLat, sLng, eLat, eLng, scale) {
     map: map,
     path: line,
     strokeWeight: Math.ceil(scale * 10),
-    strokeOpacity: UQL.lineOpacity,
-    strokeColor: UQL.lineColour
+    strokeOpacity: UQL.pef.lineOpacity,
+    strokeColor: UQL.pef.lineColour
   });
 };
 
@@ -183,19 +182,19 @@ UQL.drawLine = function (map, sLat, sLng, eLat, eLng, scale) {
  *
  * @param {String}  spreadSheet
  */
-UQL.drawToolbar = function (spreadSheet) {
+UQL.pef.drawToolbar = function (spreadSheet) {
   var components = [
     {type: 'html', datasource: spreadSheet},
     {type: 'csv', datasource: spreadSheet}
   ];
 
-  var container = document.getElementById('toolbar-div');
+  var container = document.getElementById('pef-toolbar-div');
   google.visualization.drawToolbar(container, components);
 
   // dodgy hacks to make it look bootstrappy
-  $('#toolbar-div > span > div').removeClass('charts-menu-button').addClass('form-control').addClass('btn').addClass('btn-success');
-  $('#toolbar-div div').removeClass('button-inner-box').removeClass('charts-menu-button-inner-box').removeClass('charts-menu-button-outer-box');
-  $('#toolbar-div > span span').html('Export data');
+  $('#pef-toolbar-div > span > div').removeClass('charts-menu-button').addClass('form-control').addClass('btn').addClass('btn-success');
+  $('#pef-toolbar-div div').removeClass('button-inner-box').removeClass('charts-menu-button-inner-box').removeClass('charts-menu-button-outer-box');
+  $('#pef-toolbar-div > span span').html('Export data');
 };
 
 
@@ -203,27 +202,27 @@ UQL.drawToolbar = function (spreadSheet) {
  * Shows a google GeoChart visualisation to the '#map' html element
  *
  * Globals:
- *   UQL.pefDataTable
+ *   UQL.pef.dataTable
  */
-UQL.drawMap = function () {
+UQL.pef.drawMap = function () {
   var mapOptions = {
-    center: {lat: UQL.mapCentre.lat, lng: UQL.mapCentre.lng},
-    zoom: UQL.mapZoom,
+    center: {lat: UQL.pef.mapCentre.lat, lng: UQL.pef.mapCentre.lng},
+    zoom: UQL.pef.mapZoom,
     mapTypeId: google.maps.MapTypeId.SATELLITE
   };
-  UQL.map = new google.maps.Map(document.getElementById('map'), mapOptions);
+  UQL.pef.map = new google.maps.Map(document.getElementById('pef-map'), mapOptions);
 };
 
 /**
  * Allow user to click on table and zoom map
  */
-UQL.rowSelectFunction = function () {
-  var select = UQL.chart.getSelection();
+UQL.pef.rowSelectFunction = function () {
+  var select = UQL.pef.chart.getSelection();
   if (select.length > 0) {
-    var row = UQL.getRow(UQL.pefDataTable, select[0].row);
+    var row = UQL.pef.getRow(UQL.pef.dataTable, select[0].row);
     var pos = new google.maps.LatLng(row.Lat, row.Lng);
-    UQL.map.setCenter(pos);
-    UQL.map.setZoom(UQL.mapZoomed);
+    UQL.pef.map.setCenter(pos);
+    UQL.pef.map.setZoom(UQL.pef.mapZoomed);
   }
 };
 
@@ -232,38 +231,38 @@ UQL.rowSelectFunction = function () {
  *
  * @param dataTable
  */
-UQL.drawDataTable = function (dataTable) {
+UQL.pef.drawDataTable = function (dataTable) {
   var options = {};
 
   var displayDataView = new google.visualization.DataView(dataTable);
 
   var hideColumnIndexes = [];
   for (var c = 0, l = displayDataView.getNumberOfColumns(); c < l; c++) {
-    var columnName = UQL.pefDataTable.getColumnLabel(c);
-    if (UQL.hideColumns.indexOf(columnName) !== -1) {
+    var columnName = UQL.pef.dataTable.getColumnLabel(c);
+    if (UQL.pef.hideColumns.indexOf(columnName) !== -1) {
       hideColumnIndexes.push(c);
     }
   }
 
   displayDataView.hideColumns(hideColumnIndexes);
 
-  UQL.chart = new google.visualization.Table(document.getElementById('data-table'));
-  UQL.chart.draw(displayDataView, options);
-  google.visualization.events.addListener(UQL.chart, 'select', UQL.rowSelectFunction);
+  UQL.pef.chart = new google.visualization.Table(document.getElementById('pef-data-table'));
+  UQL.pef.chart.draw(displayDataView, options);
+  google.visualization.events.addListener(UQL.pef.chart, 'select', UQL.pef.rowSelectFunction);
 };
 
 
 // go ...
 google.load('visualization', '1', {packages: ['table']});
-google.maps.event.addDomListener(window, 'load', UQL.loadVisualisations);
+google.maps.event.addDomListener(window, 'load', UQL.pef.loadVisualisations);
 
 /*
  * jQuery function to reset map
  */
 $('#reset-map').click(function () {
-  var pos = new google.maps.LatLng(UQL.mapCentre.lat, UQL.mapCentre.lng);
-  UQL.map.setCenter(pos);
-  UQL.map.setZoom(UQL.mapZoom);
+  var pos = new google.maps.LatLng(UQL.pef.mapCentre.lat, UQL.pef.mapCentre.lng);
+  UQL.pef.map.setCenter(pos);
+  UQL.pef.map.setZoom(UQL.pef.mapZoom);
 });
 
 

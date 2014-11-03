@@ -10,30 +10,32 @@
 var UQL = UQL || {};
 
 // have to use globals in callbacks
-UQL.cefDataTable = null;
-UQL.chart = null;
-UQL.spreadSheet = 'https://spreadsheets.google.com/tq?key=1-RhbWPKweWTnHClvAclHn2t_4x33Q-gzcmSqBwRTxfY';
-UQL.columns = {
-  country: 0,
-  region: 1,
-  year: 2,
-  students: 3,
-  publications: 4,
-  grant: 5,
-  collaborations: 6,
-  alumni: 7,
-  agreements: 8,
-  total: 9
+UQL.cef = {
+  dataTable: null,
+  chart: null,
+  spreadSheet: 'https://spreadsheets.google.com/tq?key=1-RhbWPKweWTnHClvAclHn2t_4x33Q-gzcmSqBwRTxfY',
+  columns: {
+    country: 0,
+    region: 1,
+    year: 2,
+    students: 3,
+    publications: 4,
+    grant: 5,
+    collaborations: 6,
+    alumni: 7,
+    agreements: 8,
+    total: 9
+  }
 };
 
 /**
  * Loads a google spreadsheet
  */
-UQL.loadVisualisations = function () {
-  UQL.chart = new google.visualization.GeoChart(document.getElementById('map'));
-  google.visualization.events.addListener(UQL.chart, 'select', UQL.showCountryInfo);
+UQL.cef.loadVisualisations = function () {
+  UQL.cef.chart = new google.visualization.GeoChart(document.getElementById('cef-map'));
+  google.visualization.events.addListener(UQL.cef.chart, 'select', UQL.cef.showCountryInfo);
 
-  new google.visualization.Query(UQL.spreadSheet).send(UQL.drawVisualisations);
+  new google.visualization.Query(UQL.cef.spreadSheet).send(UQL.cef.drawVisualisations);
 };
 
 /**
@@ -42,19 +44,19 @@ UQL.loadVisualisations = function () {
  *
  * @param {Object} response
  */
-UQL.drawVisualisations = function (response) {
-  UQL.cefDataTable = response.getDataTable();
+UQL.cef.drawVisualisations = function (response) {
+  UQL.cef.dataTable = response.getDataTable();
 
-  UQL.drawRegionsMap(UQL.cefDataTable, UQL.columns.total);
-  UQL.drawDataTable(UQL.cefDataTable);
-  UQL.drawToolbar(UQL.spreadSheet);
+  UQL.cef.drawRegionsMap(UQL.cef.dataTable, UQL.cef.columns.total);
+  UQL.cef.drawDataTable(UQL.cef.dataTable);
+  UQL.cef.drawToolbar(UQL.cef.spreadSheet);
 };
 
 /**
  * Called when user clicks on country
  */
-UQL.showCountryInfo = function () {
-  var countryInfo = UQL.getCountryInfo(UQL.cefDataTable);
+UQL.cef.showCountryInfo = function () {
+  var countryInfo = UQL.cef.getCountryInfo(UQL.cef.dataTable);
   var ignoreColumns = ['Country', 'Region'];
   var display = '<table class="table" role="table">';
   //display += '<tr><th>Metric</th><th>&nbsp;</th><th>Value</th></tr>';
@@ -80,8 +82,8 @@ UQL.showCountryInfo = function () {
  *
  * @param {Object}  dataTable
  */
-UQL.getCountryInfo = function (dataTable) {
-  var select = UQL.chart.getSelection();
+UQL.cef.getCountryInfo = function (dataTable) {
+  var select = UQL.cef.chart.getSelection();
   var data = {};
   if (select.length > 0) {
     for (var i = 0, l = dataTable.getNumberOfColumns(); i < l; i++) {
@@ -105,7 +107,7 @@ UQL.getCountryInfo = function (dataTable) {
  * @param Integer column to display from spreadsheet
  * @param numeric region to display on map
  */
-UQL.drawRegionsMap = function (dataTable, column, region) {
+UQL.cef.drawRegionsMap = function (dataTable, column, region) {
   var options = {};
   if (typeof region !== 'undefined') {
     options.region = region;
@@ -119,7 +121,7 @@ UQL.drawRegionsMap = function (dataTable, column, region) {
     }
   }
 
-  UQL.chart.draw(editedDataTable, options)
+  UQL.cef.chart.draw(editedDataTable, options)
 };
 
 /**
@@ -127,10 +129,10 @@ UQL.drawRegionsMap = function (dataTable, column, region) {
  *
  * @param {Object} dataTable
  */
-UQL.drawDataTable = function (dataTable) {
+UQL.cef.drawDataTable = function (dataTable) {
   var options = {};
 
-  var chart = new google.visualization.Table(document.getElementById('data-table'));
+  var chart = new google.visualization.Table(document.getElementById('cef-data-table'));
 
   chart.draw(dataTable, options);
 };
@@ -140,24 +142,24 @@ UQL.drawDataTable = function (dataTable) {
  *
  * @param {String}  spreadSheet
  */
-UQL.drawToolbar = function() {
+UQL.cef.drawToolbar = function() {
   var components = [
     {type: 'html', datasource: spreadSheet},
     {type: 'csv', datasource: spreadSheet}
   ];
 
-  var container = document.getElementById('toolbar-div');
+  var container = document.getElementById('cef-toolbar-div');
   google.visualization.drawToolbar(container, components);
 
   // dodgy hacks to make it look bootstrappy
-  $('#toolbar-div > span > div').removeClass('charts-menu-button').addClass('form-control').addClass('btn').addClass('btn-success');
-  $('#toolbar-div div').removeClass('button-inner-box').removeClass('charts-menu-button-inner-box').removeClass('charts-menu-button-outer-box');
-  $('#toolbar-div > span span').html('Export data');
+  $('#cef-toolbar-div > span > div').removeClass('charts-menu-button').addClass('form-control').addClass('btn').addClass('btn-success');
+  $('#cef-toolbar-div div').removeClass('button-inner-box').removeClass('charts-menu-button-inner-box').removeClass('charts-menu-button-outer-box');
+  $('#cef-toolbar-div > span span').html('Export data');
 };
 
 // go ...
 google.load("visualization", "1", {packages: ["geochart", "table"]});
-google.setOnLoadCallback(UQL.loadVisualisations);
+google.setOnLoadCallback(UQL.cef.loadVisualisations);
 
 /*
  * jQuery function to allow selection of region and data type
@@ -167,9 +169,9 @@ $('#show-map').click(function () {
   var region = $("#region").val();
 
   if (parseInt(region, 10) !== 0) {
-    UQL.drawRegionsMap(UQL.cefDataTable, column, region)
+    UQL.cef.drawRegionsMap(UQL.cef.dataTable, column, region)
   } else {
-    UQL.drawRegionsMap(UQL.cefDataTable, column)
+    UQL.cef.drawRegionsMap(UQL.cef.dataTable, column)
   }
 });
 
