@@ -32,6 +32,7 @@ UQL.cef = {
  * Loads a google spreadsheet
  */
 UQL.cef.loadVisualisations = function () {
+  $('#cef-loader').hide();
   UQL.cef.chart = new google.visualization.GeoChart(document.getElementById('cef-map'));
   google.visualization.events.addListener(UQL.cef.chart, 'select', UQL.cef.showCountryInfo);
 

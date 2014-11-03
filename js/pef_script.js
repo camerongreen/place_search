@@ -54,6 +54,7 @@ UQL.pef.loadVisualisations = function () {
 UQL.pef.drawVisualisations = function (response) {
   UQL.pef.dataTable = response.getDataTable();
 
+  $('#pef-loader').hide();
   UQL.pef.drawMap();
   UQL.pef.drawConnections(UQL.pef.map, UQL.pef.dataTable);
   UQL.pef.drawDataTable(UQL.pef.dataTable);

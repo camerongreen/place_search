@@ -18,3 +18,10 @@ form button,
 form select {
   margin-right: 1ex;
 }
+
+#cef-loader,
+#pef-loader {
+  height: 100px;
+  width: 100px;
+  margin: auto;
+}
