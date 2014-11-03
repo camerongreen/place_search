@@ -1,3 +1,4 @@
+/*global google */
 /**
  * Visualisation to display CEF statistics globally
  *
@@ -11,25 +12,17 @@ UQL.pefDataTable = null;
 UQL.map = null;
 UQL.chart = null;
 UQL.spreadSheet = 'https://spreadsheets.google.com/tq?key=1eQqryMh3q6OwIMKfT5VPkLXvYJEFyPt4klwuVoUTpBA';
-UQL.markerImage = 'http://labs.google.com/ridefinder/images/mm_20_white.png'
+UQL.markerImage = 'http://labs.google.com/ridefinder/images/mm_20_white.png';
 UQL.mapZoom = 3;
 UQL.mapZoomed = 8;
 UQL.lineColour = '#FFFFFF';
 UQL.lineOpacity = .5;
 
-UQL.columns = {
-  partner: 0,
-  city: 1,
-  country: 2,
-  region: 3,
-  students: 4,
-  publications: 5,
-  collaborations: 6,
-  staff: 7,
-  address: 8,
-  lat: 9,
-  lng: 10
-};
+UQL.hideColumns = [
+  'Lat',
+  'Lng',
+  'Geo Address'
+];
 
 UQL.address = {
   lat: -27.497516,
@@ -39,6 +32,11 @@ UQL.address = {
     campus: 'St Lucia',
     country: 'Australia'
   }
+};
+
+UQL.mapCentre = {
+  lat: 2,
+  lng: 135
 };
 
 /**
@@ -56,8 +54,6 @@ UQL.loadVisualisations = function () {
  */
 UQL.drawVisualisations = function (response) {
   UQL.pefDataTable = response.getDataTable();
-
-  UQL.pefDataTable.removeColumn(UQL.columns.address);
 
   UQL.drawMap();
   UQL.drawConnections(UQL.map, UQL.pefDataTable);
@@ -90,8 +86,7 @@ UQL.getRow = function (dataTable, rowNum) {
   for (var c = 0, nc = dataTable.getNumberOfColumns(); c < nc; c++) {
     var columnName = dataTable.getColumnLabel(c);
     var columnValue = dataTable.getValue(rowNum, c);
-    if (['Lat', 'Lng'].indexOf(columnName) !== -1)
-    {
+    if (['Lat', 'Lng'].indexOf(columnName) !== -1) {
       returnVal[columnName] = parseFloat(columnValue);
     } else {
       returnVal[columnName] = columnValue;
@@ -119,27 +114,26 @@ UQL.addPlacemark = function (map, lat, lng, title, display) {
     icon: icon
   });
 
-  var content = "<div class='popup-content'>" +
-    "<h2>" + title + "</h2>" +
-    "<table>";
+  var content = '<div class="popup-content">' +
+    '<h2>' + title + '</h2>' +
+    '<table class="table" role="table">';
 
-  for (i in display) {
-    if (display.hasOwnProperty(i)) {
-      content += "<tr><td>" + i + " : </td><td>" + display[i] + "</td></tr>";
+  for (var i in display) {
+    if (display.hasOwnProperty(i) && (UQL.hideColumns.indexOf(i) === -1)) {
+      content += '<tr><td>' + i + ' : </td><td>' + display[i] + '</td></tr>';
     }
   }
 
-  content += "</table></div>";
+  content += '</table></div>';
 
   var infoWindow = new google.maps.InfoWindow({
-    content: content,
-    disableAutoPan: true
+    content: content
   });
 
   google.maps.event.addListener(marker, 'click', function () {
     infoWindow.open(map, marker);
   });
-}
+};
 
 UQL.drawLine = function (map, sLat, sLng, eLat, eLng, scale) {
   var line = [
@@ -154,13 +148,13 @@ UQL.drawLine = function (map, sLat, sLng, eLat, eLng, scale) {
     strokeOpacity: UQL.lineOpacity,
     strokeColor: UQL.lineColour
   });
-}
+};
 
 
 /**
  * Draw the toolbar
  *
- * @param string  spreadSheet
+ * @param {String}  spreadSheet
  */
 UQL.drawToolbar = function (spreadSheet) {
   var components = [
@@ -177,46 +171,6 @@ UQL.drawToolbar = function (spreadSheet) {
   $('#toolbar-div > span span').html('Export data');
 };
 
-/**
- * Called when user clicks on country
- *
- * @param {Object}
- */
-UQL.showCountryInfo = function (eventData) {
-  var countryInfo = UQL.getCountryInfo(eventData.region);
-  var ignoreColumns = ['Country'];
-  var display = '<table>';
-  //display += '<tr><th>Metric</th><th>&nbsp;</th><th>Value</th></tr>';
-  for (var i in countryInfo) {
-    if (countryInfo.hasOwnProperty(i) && (ignoreColumns.indexOf(i) === -1)) {
-      display += '<tr>';
-      display += '<td>' + i + ' : </td><td>&nbsp;</td><td>' + countryInfo[i] + '</td>'
-      display += '</tr>';
-    }
-  }
-  display += '</table>';
-
-  var newDiv = $('<div>');
-  newDiv.html(display);
-  newDiv.dialog({
-    minWidth: 400,
-    title: countryInfo.Country
-  });
-};
-
-/**
- * Function to retrieve information about a country given its name
- */
-UQL.getCountryInfo = function () {
-  var select = UQL.map.getSelection();
-  var data = {};
-  if (select.length > 0) {
-    for (var i = 0, l = UQL.pefDataTable.getNumberOfColumns(); i < l; i++) {
-      data[UQL.pefDataTable.getColumnLabel(i)] = UQL.pefDataTable.getValue(select[0].row, i);
-    }
-  }
-  return data;
-};
 
 /**
  * Shows a google GeoChart visualisation to the '#map' html element
@@ -226,7 +180,7 @@ UQL.getCountryInfo = function () {
  */
 UQL.drawMap = function () {
   var mapOptions = {
-    center: {lat: UQL.address.lat, lng: UQL.address.lng},
+    center: {lat: UQL.mapCentre.lat, lng: UQL.mapCentre.lng},
     zoom: UQL.mapZoom,
     mapTypeId: google.maps.MapTypeId.SATELLITE
   };
@@ -235,8 +189,6 @@ UQL.drawMap = function () {
 
 /**
  * Allow user to click on table and zoom map
- *
- * @param values
  */
 UQL.rowSelectFunction = function () {
   var select = UQL.chart.getSelection();
@@ -258,11 +210,10 @@ UQL.drawDataTable = function (dataTable) {
 
   var displayDataView = new google.visualization.DataView(dataTable);
 
-  var hideColumns = ['Lat', 'Lng'];
   var hideColumnIndexes = [];
   for (var c = 0, l = displayDataView.getNumberOfColumns(); c < l; c++) {
     var columnName = UQL.pefDataTable.getColumnLabel(c);
-    if (hideColumns.indexOf(columnName) !== -1) {
+    if (UQL.hideColumns.indexOf(columnName) !== -1) {
       hideColumnIndexes.push(c);
     }
   }
@@ -276,14 +227,14 @@ UQL.drawDataTable = function (dataTable) {
 
 
 // go ...
-google.load("visualization", "1", {packages: ["table"]});
+google.load('visualization', '1', {packages: ['table']});
 google.maps.event.addDomListener(window, 'load', UQL.loadVisualisations);
 
 /*
  * jQuery function to reset map
  */
 $('#reset-map').click(function () {
-  var pos = new google.maps.LatLng(UQL.address.lat, UQL.address.lng);
+  var pos = new google.maps.LatLng(UQL.mapCentre.lat, UQL.mapCentre.lng);
   UQL.map.setCenter(pos);
   UQL.map.setZoom(UQL.mapZoom);
 });

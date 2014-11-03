@@ -1,3 +1,4 @@
+/*global google */
 /**
  * Visualisation to display CEF statistics globally
  *
@@ -39,7 +40,7 @@ UQL.loadVisualisations = function () {
  * Callback to take the loaded spreadsheet, pull the data table
  * and initialise the visualisations
  *
- * @param response
+ * @param {Object} response
  */
 UQL.drawVisualisations = function (response) {
   UQL.cefDataTable = response.getDataTable();
@@ -51,10 +52,8 @@ UQL.drawVisualisations = function (response) {
 
 /**
  * Called when user clicks on country
- *
- * @param {Object}
  */
-UQL.showCountryInfo = function (eventData) {
+UQL.showCountryInfo = function () {
   var countryInfo = UQL.getCountryInfo(UQL.cefDataTable);
   var ignoreColumns = ['Country', 'Region'];
   var display = '<table>';
@@ -132,7 +131,7 @@ UQL.drawDataTable = function (dataTable) {
 /**
  * Draw the toolbar
  *
- * @param string  spreadSheet
+ * @param {String}  spreadSheet
  */
 UQL.drawToolbar = function() {
   var components = [
