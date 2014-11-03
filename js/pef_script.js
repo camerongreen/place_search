@@ -9,9 +9,11 @@ var UQL = UQL || {};
 
 UQL.pefDataTable = null;
 UQL.map = null;
+UQL.chart = null;
 UQL.spreadSheet = 'https://spreadsheets.google.com/tq?key=1eQqryMh3q6OwIMKfT5VPkLXvYJEFyPt4klwuVoUTpBA';
 UQL.markerImage = 'http://labs.google.com/ridefinder/images/mm_20_white.png'
 UQL.mapZoom = 3;
+UQL.mapZoomed = 8;
 UQL.lineColour = '#FFFFFF';
 UQL.lineOpacity = .5;
 
@@ -73,26 +75,40 @@ UQL.drawConnections = function (map, dataTable) {
   UQL.addPlacemark(map, UQL.address.lat, UQL.address.lng, UQL.address.title, UQL.address.details);
 
   for (var r = 0, nr = dataTable.getNumberOfRows(); r < nr; r++) {
-    var lat, lng, title, display = [];
-    for (var c = 0, nc = dataTable.getNumberOfColumns(); c < nc; c++) {
-      var columnName = dataTable.getColumnLabel(c);
-      var columnValue = dataTable.getValue(r, c);
-      if (columnName === 'Lat') {
-        lat = parseFloat(columnValue);
-      } else if (columnName === 'Lng') {
-        lng = parseFloat(columnValue);
-      } else if (columnName === 'Partner Name') {
-        title = columnValue;
-      } else {
-        display[columnName] = columnValue;
-      }
-    }
+    var row = UQL.getRow(dataTable, r);
     var scale = .1;
-    UQL.drawLine(map, UQL.address.lat, UQL.address.lng, lat, lng, scale);
-    UQL.addPlacemark(map, lat, lng, title, display);
+    UQL.drawLine(map, UQL.address.lat, UQL.address.lng, row.Lat, row.Lng, scale);
+    UQL.addPlacemark(map, row.Lat, row.Lng, row['Partner Name'], row);
   }
 };
 
+/**
+ * gets a Row into an object for easier use
+ */
+UQL.getRow = function (dataTable, rowNum) {
+  var returnVal = {};
+  for (var c = 0, nc = dataTable.getNumberOfColumns(); c < nc; c++) {
+    var columnName = dataTable.getColumnLabel(c);
+    var columnValue = dataTable.getValue(rowNum, c);
+    if (['Lat', 'Lng'].indexOf(columnName) !== -1)
+    {
+      returnVal[columnName] = parseFloat(columnValue);
+    } else {
+      returnVal[columnName] = columnValue;
+    }
+  }
+  return returnVal;
+};
+
+/**
+ * Add a placemark to the map
+ *
+ * @param map
+ * @param lat
+ * @param lng
+ * @param title
+ * @param {Object} display  Display in popup
+ */
 UQL.addPlacemark = function (map, lat, lng, title, display) {
   var myLatLng = new google.maps.LatLng(lat, lng);
   var icon = new google.maps.MarkerImage(UQL.markerImage);
@@ -218,6 +234,21 @@ UQL.drawMap = function () {
 };
 
 /**
+ * Allow user to click on table and zoom map
+ *
+ * @param values
+ */
+UQL.rowSelectFunction = function () {
+  var select = UQL.chart.getSelection();
+  if (select.length > 0) {
+    var row = UQL.getRow(UQL.pefDataTable, select[0].row);
+    var pos = new google.maps.LatLng(row.Lat, row.Lng);
+    UQL.map.setCenter(pos);
+    UQL.map.setZoom(UQL.mapZoomed);
+  }
+};
+
+/**
  * Shows a google Table visualisation to the '#data-table' html element
  *
  * @param dataTable
@@ -225,17 +256,36 @@ UQL.drawMap = function () {
 UQL.drawDataTable = function (dataTable) {
   var options = {};
 
-  var chart = new google.visualization.Table(document.getElementById('data-table'));
+  var displayDataView = new google.visualization.DataView(dataTable);
 
-  chart.draw(dataTable, options);
+  var hideColumns = ['Lat', 'Lng'];
+  var hideColumnIndexes = [];
+  for (var c = 0, l = displayDataView.getNumberOfColumns(); c < l; c++) {
+    var columnName = UQL.pefDataTable.getColumnLabel(c);
+    if (hideColumns.indexOf(columnName) !== -1) {
+      hideColumnIndexes.push(c);
+    }
+  }
+
+  displayDataView.hideColumns(hideColumnIndexes);
+
+  UQL.chart = new google.visualization.Table(document.getElementById('data-table'));
+  UQL.chart.draw(displayDataView, options);
+  google.visualization.events.addListener(UQL.chart, 'select', UQL.rowSelectFunction);
 };
+
 
 // go ...
 google.load("visualization", "1", {packages: ["table"]});
 google.maps.event.addDomListener(window, 'load', UQL.loadVisualisations);
 
 /*
- * jQuery function to allow moving between elements
+ * jQuery function to reset map
  */
+$('#reset-map').click(function () {
+  var pos = new google.maps.LatLng(UQL.address.lat, UQL.address.lng);
+  UQL.map.setCenter(pos);
+  UQL.map.setZoom(UQL.mapZoom);
+});
 
 
