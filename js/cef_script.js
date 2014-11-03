@@ -56,12 +56,12 @@ UQL.drawVisualisations = function (response) {
 UQL.showCountryInfo = function () {
   var countryInfo = UQL.getCountryInfo(UQL.cefDataTable);
   var ignoreColumns = ['Country', 'Region'];
-  var display = '<table>';
+  var display = '<table class="table" role="table">';
   //display += '<tr><th>Metric</th><th>&nbsp;</th><th>Value</th></tr>';
   for (var i in countryInfo) {
     if (countryInfo.hasOwnProperty(i) && (ignoreColumns.indexOf(i) === -1)) {
       display += '<tr>';
-      display += '<td>' + i + ' : </td><td>&nbsp;</td><td>' + countryInfo[i].toLocaleString() + '</td>'
+      display += '<td>' + i + '</td><td>' + countryInfo[i] + '</td>'
       display += '</tr>';
     }
   }
@@ -85,7 +85,14 @@ UQL.getCountryInfo = function (dataTable) {
   var data = {};
   if (select.length > 0) {
     for (var i = 0, l = dataTable.getNumberOfColumns(); i < l; i++) {
-      data[dataTable.getColumnLabel(i)] = dataTable.getValue(select[0].row, i);
+      var columnValue = dataTable.getValue(select[0].row, i);
+      var columnName = dataTable.getColumnLabel(i);
+
+      if (columnName === 'Year') {
+        data[columnName] = columnValue;
+      } else {
+        data[columnName] = columnValue.toLocaleString();
+      }
     }
   }
   return data;

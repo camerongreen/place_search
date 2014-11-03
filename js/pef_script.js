@@ -14,7 +14,7 @@ UQL.chart = null;
 UQL.spreadSheet = 'https://spreadsheets.google.com/tq?key=1eQqryMh3q6OwIMKfT5VPkLXvYJEFyPt4klwuVoUTpBA';
 UQL.markerImage = 'http://labs.google.com/ridefinder/images/mm_20_white.png';
 UQL.mapZoom = 3;
-UQL.mapZoomed = 8;
+UQL.mapZoomed = 7;
 UQL.lineColour = '#FFFFFF';
 UQL.lineOpacity = .5;
 
@@ -114,13 +114,31 @@ UQL.addPlacemark = function (map, lat, lng, title, display) {
     icon: icon
   });
 
+  var infoWindow = UQL.makeInfoWindow(title, display);
+
+  google.maps.event.addListener(marker, 'click', function () {
+    infoWindow.open(map, marker);
+  });
+};
+
+/**
+/**
+ * Add a placemark to the map
+ *
+ * @param title
+ * @param {Object} display  Display in popup
+ */
+UQL.makeInfoWindow = function (title, display) {
+  var hideColumns = UQL.hideColumns.slice(0);
+  hideColumns.push('Partner Name');
+
   var content = '<div class="popup-content">' +
-    '<h2>' + title + '</h2>' +
+    '<h3>' + title + '</h3>' +
     '<table class="table" role="table">';
 
   for (var i in display) {
-    if (display.hasOwnProperty(i) && (UQL.hideColumns.indexOf(i) === -1)) {
-      content += '<tr><td>' + i + ' : </td><td>' + display[i] + '</td></tr>';
+    if (display.hasOwnProperty(i) && (hideColumns.indexOf(i) === -1)) {
+      content += '<tr><td>' + i + '</td><td>' + display[i] + '</td></tr>';
     }
   }
 
@@ -130,11 +148,20 @@ UQL.addPlacemark = function (map, lat, lng, title, display) {
     content: content
   });
 
-  google.maps.event.addListener(marker, 'click', function () {
-    infoWindow.open(map, marker);
-  });
+  return infoWindow;
 };
 
+/**
+ *
+ * Draw a line from one point of a map to another
+ *
+ * @param {Object} map
+ * @param sLat
+ * @param sLng
+ * @param eLat
+ * @param eLng
+ * @param scale 0.1 - 1 for thickness of line
+ */
 UQL.drawLine = function (map, sLat, sLng, eLat, eLng, scale) {
   var line = [
     new google.maps.LatLng(sLat, sLng),
