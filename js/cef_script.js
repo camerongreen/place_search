@@ -4,9 +4,11 @@
  * @author  Cameron Green <cam@uq.edu.au>
  * @date  2014-10-29
  */
+
 // create a quasi namespace
 var UQL = UQL || {};
 
+// have to use globals in callbacks
 UQL.cefDataTable = null;
 UQL.chart = null;
 UQL.spreadSheet = 'https://spreadsheets.google.com/tq?key=1-RhbWPKweWTnHClvAclHn2t_4x33Q-gzcmSqBwRTxfY';
@@ -44,7 +46,7 @@ UQL.drawVisualisations = function (response) {
 
   UQL.drawRegionsMap(UQL.cefDataTable, UQL.columns.total);
   UQL.drawDataTable(UQL.cefDataTable);
-  UQL.drawToolbar();
+  UQL.drawToolbar(UQL.spreadSheet);
 };
 
 /**
@@ -129,11 +131,13 @@ UQL.drawDataTable = function (dataTable) {
 
 /**
  * Draw the toolbar
+ *
+ * @param string  spreadSheet
  */
 UQL.drawToolbar = function() {
   var components = [
-    {type: 'html', datasource: UQL.spreadSheet},
-    {type: 'csv', datasource: UQL.spreadSheet}
+    {type: 'html', datasource: spreadSheet},
+    {type: 'csv', datasource: spreadSheet}
   ];
 
   var container = document.getElementById('toolbar-div');
