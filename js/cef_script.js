@@ -143,7 +143,7 @@ UQL.cef.drawDataTable = function (dataTable) {
  *
  * @param {String}  spreadSheet
  */
-UQL.cef.drawToolbar = function() {
+UQL.cef.drawToolbar = function(spreadSheet) {
   var components = [
     {type: 'html', datasource: spreadSheet},
     {type: 'csv', datasource: spreadSheet}
