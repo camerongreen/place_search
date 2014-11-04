@@ -58,24 +58,26 @@ UQL.cef.drawVisualisations = function (response) {
  */
 UQL.cef.showCountryInfo = function () {
   var countryInfo = UQL.cef.getCountryInfo(UQL.cef.dataTable);
-  var ignoreColumns = ['Country', 'Region'];
-  var display = '<table class="table" role="table">';
-  //display += '<tr><th>Metric</th><th>&nbsp;</th><th>Value</th></tr>';
-  for (var i in countryInfo) {
-    if (countryInfo.hasOwnProperty(i) && (ignoreColumns.indexOf(i) === -1)) {
-      display += '<tr>';
-      display += '<td>' + i + '</td><td>' + countryInfo[i] + '</td>'
-      display += '</tr>';
+  if (typeof countryInfo.Country !== 'undefined') {
+    var ignoreColumns = ['Country', 'Region'];
+    var display = '<table class="table" role="table">';
+    //display += '<tr><th>Metric</th><th>&nbsp;</th><th>Value</th></tr>';
+    for (var i in countryInfo) {
+      if (countryInfo.hasOwnProperty(i) && (ignoreColumns.indexOf(i) === -1)) {
+        display += '<tr>';
+        display += '<td>' + i + '</td><td>' + countryInfo[i] + '</td>'
+        display += '</tr>';
+      }
     }
-  }
-  display += '</table>';
+    display += '</table>';
 
-  var newDiv = $('<div>');
-  newDiv.html(display);
-  newDiv.dialog({
-    minWidth: 400,
-    title: countryInfo.Country
-  });
+    var newDiv = $('<div>');
+    newDiv.html(display);
+    newDiv.dialog({
+      minWidth: 400,
+      title: countryInfo.Country
+    });
+  }
 };
 
 /**
@@ -143,7 +145,7 @@ UQL.cef.drawDataTable = function (dataTable) {
  *
  * @param {String}  spreadSheet
  */
-UQL.cef.drawToolbar = function(spreadSheet) {
+UQL.cef.drawToolbar = function (spreadSheet) {
   var components = [
     {type: 'html', datasource: spreadSheet},
     {type: 'csv', datasource: spreadSheet}

@@ -209,6 +209,7 @@ UQL.pef.drawMap = function () {
   var mapOptions = {
     center: {lat: UQL.pef.mapCentre.lat, lng: UQL.pef.mapCentre.lng},
     zoom: UQL.pef.mapZoom,
+    minZoom: 2,
     mapTypeId: google.maps.MapTypeId.SATELLITE
   };
   UQL.pef.map = new google.maps.Map(document.getElementById('pef-map'), mapOptions);
