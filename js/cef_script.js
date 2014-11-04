@@ -57,25 +57,41 @@ UQL.cef.drawVisualisations = function (response) {
  * Called when user clicks on country
  */
 UQL.cef.showCountryInfo = function () {
-  var countryInfo = UQL.cef.getCountryInfo(UQL.cef.dataTable);
-  if (typeof countryInfo.Country !== 'undefined') {
-    var ignoreColumns = ['Country', 'Region'];
-    var display = '<table class="table" role="table">';
-    //display += '<tr><th>Metric</th><th>&nbsp;</th><th>Value</th></tr>';
-    for (var i in countryInfo) {
-      if (countryInfo.hasOwnProperty(i) && (ignoreColumns.indexOf(i) === -1)) {
-        display += '<tr>';
-        display += '<td>' + i + '</td><td>' + countryInfo[i] + '</td>'
-        display += '</tr>';
-      }
+  var display = UQL.cef.getCountryInfo(UQL.cef.dataTable);
+  if (typeof display.Country !== 'undefined') {
+    var content = '<table class="table cef-info-window-content" role="table">';
+    //content += '<tr><th>Metric</th><th>&nbsp;</th><th>Value</th></tr>';
+    if (display.hasOwnProperty('Year')) {
+      content += '<tr><td><span><i class="glyphicon glyphicon-calendar"></i></span> Year</td><td>' + display.Year + '</td></tr>';
     }
-    display += '</table>';
+    if (display.hasOwnProperty('Students')) {
+      content += '<tr><td><span><i class="glyphicon glyphicon-user"></i></span> Students</td><td>' + display.Students + '</td></tr>';
+    }
+    if (display.hasOwnProperty('Alumni')) {
+      content += '<tr><td><span><i class="glyphicon glyphicon-user"></i></span> Alumni</td><td>' + display.Alumni + '</td></tr>';
+    }
+    if (display.hasOwnProperty('Grant $')) {
+      content += '<tr><td><span><i class="glyphicon glyphicon-usd"></i></span> Grant</td><td>$' + display['Grant $'] + '</td></tr>';
+    }
+    if (display.hasOwnProperty('Publications')) {
+      content += '<tr><td><span><i class="glyphicon glyphicon-book"></i></span> Publications</td><td>' + display.Publications + '</td></tr>';
+    }
+    if (display.hasOwnProperty('Collaborations')) {
+      content += '<tr><td><span><i class="glyphicon glyphicon-transfer"></i></span> Collaborations</td><td>' + display.Collaborations + '</td></tr>';
+    }
+    if (display.hasOwnProperty('Agreements')) {
+      content += '<tr><td><span><i class="glyphicon glyphicon-thumbs-up"></i></span> Agreements</td><td>' + display.Agreements + '</td></tr>';
+    }
+    if (display.hasOwnProperty('Total')) {
+      content += '<tr><td><span><i class="glyphicon glyphicon-plus-sign"></i></span> Total</td><td>' + display.Total + '</td></tr>';
+    }
+    content += '</table>';
 
     var newDiv = $('<div>');
-    newDiv.html(display);
+    newDiv.html(content);
     newDiv.dialog({
       minWidth: 400,
-      title: countryInfo.Country
+      title: display.Country
     });
   }
 };

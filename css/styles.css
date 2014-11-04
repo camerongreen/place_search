@@ -25,3 +25,12 @@ form select {
   width: 100px;
   margin: auto;
 }
+
+.pef-info-window-content img {
+  max-width: 150px;
+}
+.cef-info-window-content td span,
+.pef-info-window-content td span {
+  /*color: #60227C;*/
+  color: #BBB;
+}

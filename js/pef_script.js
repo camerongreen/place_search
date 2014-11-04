@@ -1,6 +1,6 @@
 /*global google */
 /**
- * Visualisation to display CEF statistics globally
+ * Visualisation to display PEF statistics globally
  *
  * @author  Cameron Green <cam@uq.edu.au>
  * @date  2014-10-29
@@ -27,9 +27,10 @@ UQL.pef = {
     lat: -27.497516,
     lng: 153.013206,
     title: 'The University of Queensland',
+    image: 'images/UQ.png',
     details: {
-      campus: 'St Lucia',
-      country: 'Australia'
+      City: 'Brisbane',
+      Country: 'Australia'
     }
   },
   mapCentre: {
@@ -68,13 +69,13 @@ UQL.pef.drawVisualisations = function (response) {
  * @param {Object}  dataTable
  */
 UQL.pef.drawConnections = function (map, dataTable) {
-  UQL.pef.addPlacemark(map, UQL.pef.address.lat, UQL.pef.address.lng, UQL.pef.address.title, UQL.pef.address.details);
+  UQL.pef.addPlacemark(map, UQL.pef.address.lat, UQL.pef.address.lng, UQL.pef.address.title, UQL.pef.address.image, UQL.pef.address.details);
 
   for (var r = 0, nr = dataTable.getNumberOfRows(); r < nr; r++) {
     var row = UQL.pef.getRow(dataTable, r);
     var scale = .1;
     UQL.pef.drawLine(map, UQL.pef.address.lat, UQL.pef.address.lng, row.Lat, row.Lng, scale);
-    UQL.pef.addPlacemark(map, row.Lat, row.Lng, row['Partner Name'], row);
+    UQL.pef.addPlacemark(map, row.Lat, row.Lng, row['Partner Name'], null, row);
   }
 };
 
@@ -102,9 +103,11 @@ UQL.pef.getRow = function (dataTable, rowNum) {
  * @param lat
  * @param lng
  * @param title
+ * @param image
  * @param {Object} display  Display in popup
  */
-UQL.pef.addPlacemark = function (map, lat, lng, title, display) {
+UQL.pef.addPlacemark = function (map, lat, lng, title, image, display)
+{
   var myLatLng = new google.maps.LatLng(lat, lng);
   var icon = new google.maps.MarkerImage(UQL.pef.markerImage);
   var marker = new google.maps.Marker({
@@ -114,42 +117,58 @@ UQL.pef.addPlacemark = function (map, lat, lng, title, display) {
     icon: icon
   });
 
-  var infoWindow = UQL.pef.makeInfoWindow(title, display);
+  var infoWindow = UQL.pef.makeInfoWindow(title, image, display);
 
   google.maps.event.addListener(marker, 'click', function () {
     infoWindow.open(map, marker);
   });
-};
+}
+;
 
 /**
  /**
  * Add a placemark to the map
  *
  * @param title
+ * @param image
  * @param {Object} display  Display in popup
  */
-UQL.pef.makeInfoWindow = function (title, display) {
-  var hideColumns = UQL.pef.hideColumns.slice(0);
-  hideColumns.push('Partner Name');
+UQL.pef.makeInfoWindow = function (title, image, display)
+{
+  var content = '<div class="pef-info-window-content">';
+  if (image !== null) {
+    content += '<div class="col-sm-4"><img src="' + image + '" alt="' + title + ' Logo" class="img-responsive img-thumbnail"/></div><div class="col-sm-8">';
+  }
+  content += '<h3>' + title + '</h3>' +
+  '<table class="table" role="table">';
 
-  var content = '<div class="pef-popup-content">' +
-    '<h3>' + title + '</h3>' +
-    '<table class="table" role="table">';
-
-  for (var i in display) {
-    if (display.hasOwnProperty(i) && (hideColumns.indexOf(i) === -1)) {
-      content += '<tr><td>' + i + '</td><td>' + display[i] + '</td></tr>';
-    }
+  content += '<tr><td><span><i class="glyphicon glyphicon-globe"></i></span> City</td><td>' + display.City + ', ' + display.Country + '</td></tr>';
+  if (display.hasOwnProperty('Students')) {
+    content += '<tr><td><span><i class="glyphicon glyphicon-user"></i></span> Students</td><td>' + display.Students + '</td></tr>';
+  }
+  if (display.hasOwnProperty('Staff')) {
+    content += '<tr><td><span><i class="glyphicon glyphicon-user"></i></span> Staff</td><td>' + display.Staff + '</td></tr>';
+  }
+  if (display.hasOwnProperty('Publications')) {
+    content += '<tr><td><span><i class="glyphicon glyphicon-book"></i></span> Publications</td><td>' + display.Publications + '</td></tr>';
+  }
+  if (display.hasOwnProperty('Collaborations')) {
+    content += '<tr><td><span><i class="glyphicon glyphicon-transfer"></i></span> Collaborations</td><td>' + display.Collaborations + '</td></tr>';
   }
 
   content += '</table></div>';
+
+  if (image !== null) {
+    content += '</div>';
+  }
 
   var infoWindow = new google.maps.InfoWindow({
     content: content
   });
 
   return infoWindow;
-};
+}
+;
 
 /**
  *
