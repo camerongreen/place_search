@@ -225,12 +225,44 @@ UQL.pef.drawToolbar = function (spreadSheet) {
  *   UQL.pef.dataTable
  */
 UQL.pef.drawMap = function () {
+  var styles = [
+    {
+      featureType: "road",
+      stylers: [
+        { visibility: "off" }
+      ]
+    },
+    {
+      featureType: "administrative.country",
+      elementType: "geometry.stroke",
+      stylers: [
+        { color: "#ffffff" },
+        { saturation: -100 },
+        { lightness: 100 }
+      ]
+    },
+    {
+      featureType: "administrative.neighborhood",
+      stylers: [
+        { visibility: "off" }
+      ]
+    },
+    {
+      featureType: "administrative.land_parcel",
+      stylers: [
+        { visibility: "off" }
+      ]
+    }
+  ];
+
   var mapOptions = {
     center: {lat: UQL.pef.mapCentre.lat, lng: UQL.pef.mapCentre.lng},
     zoom: UQL.pef.mapZoom,
     minZoom: 2,
     //mapTypeId: google.maps.MapTypeId.SATELLITE
-    mapTypeId: google.maps.MapTypeId.HYBRID
+    //mapTypeId: google.maps.MapTypeId.HYBRID,
+    mapTypeId: google.maps.MapTypeId.ROADMAP,
+    styles: styles
   };
   UQL.pef.map = new google.maps.Map(document.getElementById('pef-map'), mapOptions);
 };
