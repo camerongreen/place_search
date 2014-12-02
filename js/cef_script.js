@@ -13,6 +13,7 @@ var UQL = UQL || {};
 UQL.cef = {
   dataTable: null,
   chart: null,
+  colors: ['FFCCFF', '60227C'],
   spreadSheet: 'https://spreadsheets.google.com/tq?key=1-RhbWPKweWTnHClvAclHn2t_4x33Q-gzcmSqBwRTxfY',
   columns: {
     country: 0,
@@ -127,7 +128,10 @@ UQL.cef.getCountryInfo = function (dataTable) {
  * @param numeric region to display on map
  */
 UQL.cef.drawRegionsMap = function (dataTable, column, region) {
-  var options = {};
+  var options = {
+    colorAxis: {colors: UQL.cef.colors},
+    datalessRegionColor: 'FFF'
+  };
   if (typeof region !== 'undefined') {
     options.region = region;
   }
