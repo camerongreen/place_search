@@ -280,7 +280,19 @@ UQL.pef.rowSelectFunction = function () {
     UQL.pef.map.setCenter(pos);
     UQL.pef.map.setZoom(UQL.pef.mapZoomed);
     var key = row['Partner Name'] + row.Lat + row.Lng;
+    UQL.pef.closeAllWindows();
     UQL.pef.infoWindows[key].open(UQL.pef.map, UQL.pef.markers[key]);
+  }
+};
+
+/**
+ * Close all pop up windows
+ */
+UQL.pef.closeAllWindows = function () {
+  for (var key in UQL.pef.infoWindows) {
+    if (UQL.pef.infoWindows.hasOwnProperty(key)) {
+      UQL.pef.infoWindows[key].close();
+    }
   }
 };
 
