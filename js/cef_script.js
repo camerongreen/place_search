@@ -14,7 +14,8 @@ UQL.cef = {
   dataTable: null,
   chart: null,
   colors: ['FFCCFF', '60227C'],
-  spreadSheet: 'https://spreadsheets.google.com/tq?key=1-RhbWPKweWTnHClvAclHn2t_4x33Q-gzcmSqBwRTxfY',
+  defaultYear: 2013, // default year to display
+  spreadSheet: 'https://spreadsheets.google.com/tq?key=1K4Bmd3HDPVmuGneSeEUz-hWHI5XcXY-lykkTEgC8jT0',
   columns: {
     country: 0,
     region: 1,
@@ -49,7 +50,7 @@ UQL.cef.loadVisualisations = function () {
 UQL.cef.drawVisualisations = function (response) {
   UQL.cef.dataTable = response.getDataTable();
 
-  UQL.cef.drawRegionsMap(UQL.cef.dataTable, UQL.cef.columns.total);
+  UQL.cef.drawRegionsMap(UQL.cef.dataTable, UQL.cef.defaultYear, UQL.cef.columns.total);
   UQL.cef.drawDataTable(UQL.cef.dataTable);
   UQL.cef.drawToolbar(UQL.cef.spreadSheet);
 };
@@ -124,10 +125,11 @@ UQL.cef.getCountryInfo = function (dataTable) {
  * Shows a google GeoChart visualisation to the '#map' html element
  *
  * @param {Object} dataTable
+ * @param Mixed year year to display
  * @param Integer column to display from spreadsheet
  * @param numeric region to display on map
  */
-UQL.cef.drawRegionsMap = function (dataTable, column, region) {
+UQL.cef.drawRegionsMap = function (dataTable, year, column, region) {
   var options = {
     colorAxis: {colors: UQL.cef.colors},
     datalessRegionColor: 'FFF'
@@ -135,16 +137,29 @@ UQL.cef.drawRegionsMap = function (dataTable, column, region) {
   if (typeof region !== 'undefined') {
     options.region = region;
   }
-  var editedDataTable = dataTable.clone();
-  var numColumns = 10;
+  var dataTableView = new google.visualization.DataView(dataTable);
+  var rows = dataTableView.getFilteredRows([
+    {column: column, minValue: 1},
+    {column: 2, value: parseInt(year, 10)}
+    ]);
+  dataTableView.setRows(rows);
 
+  var numColumns = 10;
+  var hideColumns = [];
+
+  // hide every column except for the one we are displaying and the first
+  // column which is the country name
   for (var i = numColumns - 1; i > 0; i--) {
     if (i !== column) {
-      editedDataTable.removeColumn(i);
+      hideColumns.push(i);
     }
   }
+  
+  if (hideColumns.length > 0) {
+    dataTableView.hideColumns(hideColumns);
+  }
 
-  UQL.cef.chart.draw(editedDataTable, options)
+  UQL.cef.chart.draw(dataTableView, options)
 };
 
 /**
@@ -188,13 +203,14 @@ google.setOnLoadCallback(UQL.cef.loadVisualisations);
  * jQuery function to allow selection of region and data type
  */
 $('#show-map').click(function () {
+  var year = $("#year").val();
   var column = parseInt($("#column").val(), 10);
   var region = $("#region").val();
 
   if (parseInt(region, 10) !== 0) {
-    UQL.cef.drawRegionsMap(UQL.cef.dataTable, column, region)
+    UQL.cef.drawRegionsMap(UQL.cef.dataTable, year, column, region)
   } else {
-    UQL.cef.drawRegionsMap(UQL.cef.dataTable, column)
+    UQL.cef.drawRegionsMap(UQL.cef.dataTable, year, column)
   }
 });
 

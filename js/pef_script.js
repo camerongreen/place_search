@@ -13,7 +13,7 @@ UQL.pef = {
   map: null,
   chart: null,
   spreadSheet: 'https://spreadsheets.google.com/tq?key=1eQqryMh3q6OwIMKfT5VPkLXvYJEFyPt4klwuVoUTpBA',
-  markerImage: 'http://labs.google.com/ridefinder/images/mm_20_white.png',
+  markerImage: 'images/mm_20_white.png',
   mapZoom: 3,
   mapZoomed: 7,
   lineColour: '#FFFFFF',
