@@ -36,7 +36,9 @@ UQL.pef = {
   mapCentre: {
     lat: 2,
     lng: 135
-  }
+  },
+  markers : {},
+  infoWindows : {},
 };
 
 /**
@@ -110,20 +112,20 @@ UQL.pef.addPlacemark = function (map, lat, lng, title, image, display)
 {
   var myLatLng = new google.maps.LatLng(lat, lng);
   var icon = new google.maps.MarkerImage(UQL.pef.markerImage);
-  var marker = new google.maps.Marker({
+  var key = title + lat + lng;
+  UQL.pef.markers[key] = new google.maps.Marker({
     map: map,
     position: myLatLng,
     title: title,
     icon: icon
   });
 
-  var infoWindow = UQL.pef.makeInfoWindow(title, image, display);
+  UQL.pef.infoWindows[key] = UQL.pef.makeInfoWindow(title, image, display);
 
-  google.maps.event.addListener(marker, 'click', function () {
-    infoWindow.open(map, marker);
+  google.maps.event.addListener(UQL.pef.markers[key], 'click', function (event) {
+    UQL.pef.infoWindows[key].open(map, UQL.pef.markers[key]);
   });
-}
-;
+};
 
 /**
  /**
@@ -277,6 +279,8 @@ UQL.pef.rowSelectFunction = function () {
     var pos = new google.maps.LatLng(row.Lat, row.Lng);
     UQL.pef.map.setCenter(pos);
     UQL.pef.map.setZoom(UQL.pef.mapZoomed);
+    var key = row['Partner Name'] + row.Lat + row.Lng;
+    UQL.pef.infoWindows[key].open(UQL.pef.map, UQL.pef.markers[key]);
   }
 };
 
