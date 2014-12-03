@@ -141,12 +141,16 @@ UQL.cef.drawRegionsMap = function (dataTable, year, column, region) {
   }
   UQL.cef.dataView = new google.visualization.DataView(dataTable);
   var rows = UQL.cef.dataView.getFilteredRows([
-    {column: column, minValue: 1},
     {column: UQL.cef.columns.year, value: parseInt(year, 10)}
     ]);
   UQL.cef.dataView.setRows(rows);
 
   var mapDataView = new google.visualization.DataView(UQL.cef.dataView);
+  var mapRows = mapDataView.getFilteredRows([
+    {column: column, minValue: 0}
+    ]);
+  mapDataView.setRows(mapRows);
+
   var numColumns = 10;
   var hideColumns = [];
 
