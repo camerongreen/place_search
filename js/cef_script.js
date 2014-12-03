@@ -12,9 +12,10 @@ var UQL = UQL || {};
 // have to use globals in callbacks
 UQL.cef = {
   dataTable: null,
+  dataView: null,
   chart: null,
+  chartTable: null,
   colors: ['FFCCFF', '60227C'],
-  defaultYear: 2013, // default year to display
   spreadSheet: 'https://spreadsheets.google.com/tq?key=1K4Bmd3HDPVmuGneSeEUz-hWHI5XcXY-lykkTEgC8jT0',
   columns: {
     country: 0,
@@ -37,6 +38,7 @@ UQL.cef.loadVisualisations = function () {
   $('#cef-loader').hide();
   UQL.cef.chart = new google.visualization.GeoChart(document.getElementById('cef-map'));
   google.visualization.events.addListener(UQL.cef.chart, 'select', UQL.cef.showCountryInfo);
+  UQL.cef.chartTable = new google.visualization.Table(document.getElementById('cef-data-table'));
 
   new google.visualization.Query(UQL.cef.spreadSheet).send(UQL.cef.drawVisualisations);
 };
@@ -50,8 +52,8 @@ UQL.cef.loadVisualisations = function () {
 UQL.cef.drawVisualisations = function (response) {
   UQL.cef.dataTable = response.getDataTable();
 
-  UQL.cef.drawRegionsMap(UQL.cef.dataTable, UQL.cef.defaultYear, UQL.cef.columns.total);
-  UQL.cef.drawDataTable(UQL.cef.dataTable);
+  UQL.cef.drawRegionsMap(UQL.cef.dataTable, $('#year').val(), UQL.cef.columns.total);
+  UQL.cef.drawDataView(UQL.cef.dataView);
   UQL.cef.drawToolbar(UQL.cef.spreadSheet);
 };
 
@@ -59,7 +61,7 @@ UQL.cef.drawVisualisations = function (response) {
  * Called when user clicks on country
  */
 UQL.cef.showCountryInfo = function () {
-  var display = UQL.cef.getCountryInfo(UQL.cef.dataTable);
+  var display = UQL.cef.getCountryInfo(UQL.cef.dataView);
   if (typeof display.Country !== 'undefined') {
     var content = '<table class="table cef-info-window-content" role="table">';
     //content += '<tr><th>Metric</th><th>&nbsp;</th><th>Value</th></tr>';
@@ -99,17 +101,17 @@ UQL.cef.showCountryInfo = function () {
 };
 
 /**
- * Function to retrieve information about a country given its name
+ * Function to retrieve information about a country row
  *
- * @param {Object}  dataTable
+ * @param {Object}  dataView
  */
-UQL.cef.getCountryInfo = function (dataTable) {
+UQL.cef.getCountryInfo = function (dataView) {
   var select = UQL.cef.chart.getSelection();
   var data = {};
   if (select.length > 0) {
-    for (var i = 0, l = dataTable.getNumberOfColumns(); i < l; i++) {
-      var columnValue = dataTable.getValue(select[0].row, i);
-      var columnName = dataTable.getColumnLabel(i);
+    for (var i = 0, l = dataView.getNumberOfColumns(); i < l; i++) {
+      var columnValue = dataView.getValue(select[0].row, i);
+      var columnName = dataView.getColumnLabel(i);
 
       if (columnName === 'Year') {
         data[columnName] = columnValue;
@@ -137,13 +139,14 @@ UQL.cef.drawRegionsMap = function (dataTable, year, column, region) {
   if (typeof region !== 'undefined') {
     options.region = region;
   }
-  var dataTableView = new google.visualization.DataView(dataTable);
-  var rows = dataTableView.getFilteredRows([
+  UQL.cef.dataView = new google.visualization.DataView(dataTable);
+  var rows = UQL.cef.dataView.getFilteredRows([
     {column: column, minValue: 1},
-    {column: 2, value: parseInt(year, 10)}
+    {column: UQL.cef.columns.year, value: parseInt(year, 10)}
     ]);
-  dataTableView.setRows(rows);
+  UQL.cef.dataView.setRows(rows);
 
+  var mapDataView = new google.visualization.DataView(UQL.cef.dataView);
   var numColumns = 10;
   var hideColumns = [];
 
@@ -156,23 +159,21 @@ UQL.cef.drawRegionsMap = function (dataTable, year, column, region) {
   }
   
   if (hideColumns.length > 0) {
-    dataTableView.hideColumns(hideColumns);
+    mapDataView.hideColumns(hideColumns);
   }
 
-  UQL.cef.chart.draw(dataTableView, options)
+  UQL.cef.chart.draw(mapDataView, options)
 };
 
 /**
  * Shows a google Table visualisation to the '#data-table' html element
  *
- * @param {Object} dataTable
+ * @param {Object} dataView
  */
-UQL.cef.drawDataTable = function (dataTable) {
+UQL.cef.drawDataView = function (dataView) {
   var options = {};
 
-  var chart = new google.visualization.Table(document.getElementById('cef-data-table'));
-
-  chart.draw(dataTable, options);
+  UQL.cef.chartTable.draw(dataView, options);
 };
 
 /**
@@ -209,8 +210,10 @@ $('#show-map').click(function () {
 
   if (parseInt(region, 10) !== 0) {
     UQL.cef.drawRegionsMap(UQL.cef.dataTable, year, column, region)
+    UQL.cef.drawDataView(UQL.cef.dataView);
   } else {
     UQL.cef.drawRegionsMap(UQL.cef.dataTable, year, column)
+    UQL.cef.drawDataView(UQL.cef.dataView);
   }
 });
 
