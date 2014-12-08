@@ -12,7 +12,7 @@ UQL.pef = {
   dataTable: null,
   map: null,
   chart: null,
-  spreadSheet: 'https://spreadsheets.google.com/tq?key=1eQqryMh3q6OwIMKfT5VPkLXvYJEFyPt4klwuVoUTpBA',
+  spreadSheet: 'https://spreadsheets.google.com/tq?key=1gKxL8oZbjBRmNTJpFLnVWhrAqVLr98PBSv4dDn4hx7A',
   markerImage: 'images/mm_20_white.png',
   mapZoom: 3,
   mapZoomed: 7,
@@ -141,10 +141,10 @@ UQL.pef.makeInfoWindow = function (title, image, display)
   if (image !== null) {
     content += '<div class="col-sm-4"><img src="' + image + '" alt="' + title + ' Logo" class="img-responsive img-thumbnail"/></div><div class="col-sm-8">';
   }
-  content += '<h3>' + title + '</h3>' +
+  content += '<h4>' + title + '</h4>' +
   '<table class="table" role="table">';
 
-  content += '<tr><td><span><i class="glyphicon glyphicon-globe"></i></span> City</td><td>' + display.City + ', ' + display.Country + '</td></tr>';
+  content += '<tr><td><span><i class="glyphicon glyphicon-globe"></i></span> Location</td><td>' + display.City + ', ' + display.Country + '</td></tr>';
   if (display.hasOwnProperty('Students')) {
     content += '<tr><td><span><i class="glyphicon glyphicon-user"></i></span> Students</td><td>' + display.Students + '</td></tr>';
   }
@@ -156,6 +156,9 @@ UQL.pef.makeInfoWindow = function (title, image, display)
   }
   if (display.hasOwnProperty('Collaborations')) {
     content += '<tr><td><span><i class="glyphicon glyphicon-transfer"></i></span> Collaborations</td><td>' + display.Collaborations + '</td></tr>';
+  }
+  if (display.hasOwnProperty('Web Address')) {
+    content += '<tr><td><span><i class="glyphicon glyphicon-link"></i></span> Website</td><td><a href="' + display['Web Address'] + '" target="_blank">' + display['Web Address'] + '</a></td></tr>';
   }
 
   content += '</table></div>';
