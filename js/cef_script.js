@@ -18,6 +18,14 @@ UQL.cef = {
   colors: ['FFCCFF', '60227C'],
   mapLink: 'http://www.mis.admin.uq.edu.au/Content/Dashboards/CountryEngagementFramework/CEF.swf',
   spreadSheet: 'https://spreadsheets.google.com/tq?key=1K4Bmd3HDPVmuGneSeEUz-hWHI5XcXY-lykkTEgC8jT0',
+  reports: {
+    Alumni: 'https://advancement.uq.edu.au/advancement-services/reporting',
+    Publications: 'https://mis-xi-web.mis.admin.uq.edu.au/OpenDocument/opendoc/openDocument.jsp?sIDType=CUID&iDocID=AYkDz1YeHkVPpxKtMsUHOik',
+    'Grant Funding': 'https://mis-xi-web.mis.admin.uq.edu.au/OpenDocument/opendoc/openDocument.jsp?sIDType=CUID&iDocID=ATv.C3I2ZG9Innb3Y4NNH.o',
+    Collaborations: 'https://mis-xi-web.mis.admin.uq.edu.au/OpenDocument/opendoc/openDocument.jsp?sIDType=CUID&iDocID=AXG5BJIm77VNuUfSY72mrVI',
+    Agreements: 'https://mis-xi-web.mis.admin.uq.edu.au/OpenDocument/opendoc/openDocument.jsp?sIDType=CUID&iDocID=ASNeY_aYLRZMiEQKsCJKzY4',
+    Students: 'https://mis-xi-web.mis.admin.uq.edu.au/OpenDocument/opendoc/openDocument.jsp?sIDType=CUID&iDocID=ARa8bwifMdtFk3aWAcoGbKY'
+  },
   columns: {
     country: 0,
     region: 1,
@@ -65,30 +73,30 @@ UQL.cef.showCountryInfo = function () {
   var display = UQL.cef.getCountryInfo(UQL.cef.dataView);
   if (typeof display.Country !== 'undefined') {
     var content = '<table class="table cef-info-window-content" role="table">';
-    //content += '<tr><th>Metric</th><th>&nbsp;</th><th>Value</th></tr>';
+    content += '<tr><th>Metric</th><th>Value</th><th>Report</th></tr>';
     if (display.hasOwnProperty('Year')) {
-      content += '<tr><td><span><i class="glyphicon glyphicon-calendar"></i></span> Year</td><td>' + display.Year + '</td></tr>';
+      content += '<tr><td><span><i class="glyphicon glyphicon-calendar"></i></span> Year</td><td>' + display.Year + '</td><td>&nbsp;</td></tr>';
     }
     if (display.hasOwnProperty('Students')) {
-      content += '<tr><td><span><i class="glyphicon glyphicon-user"></i></span> Students</td><td>' + display.Students + '</td></tr>';
+      content += '<tr><td><span><i class="glyphicon glyphicon-user"></i></span> Students</td><td>' + display.Students + '</td><td><a href="' + UQL.cef.reports.Students + '" target="_blank">View</a></td></tr>';
     }
     if (display.hasOwnProperty('Alumni')) {
-      content += '<tr><td><span><i class="glyphicon glyphicon-user"></i></span> Alumni</td><td>' + display.Alumni + '</td></tr>';
+      content += '<tr><td><span><i class="glyphicon glyphicon-user"></i></span> Alumni</td><td>' + display.Alumni + '</td><td><a href="' + UQL.cef.reports.Alumni + '" target="_blank">View</a></td></tr>';
     }
     if (display.hasOwnProperty('Grant $')) {
-      content += '<tr><td><span><i class="glyphicon glyphicon-usd"></i></span> Grant</td><td>$' + display['Grant $'] + '</td></tr>';
+      content += '<tr><td><span><i class="glyphicon glyphicon-usd"></i></span> Grant</td><td>$' + display['Grant $'] + '</td><td><a href="' + UQL.cef.reports['Grant Funding'] + '" target="_blank">View</a></td></tr>';
     }
     if (display.hasOwnProperty('Publications')) {
-      content += '<tr><td><span><i class="glyphicon glyphicon-book"></i></span> Publications</td><td>' + display.Publications + '</td></tr>';
+      content += '<tr><td><span><i class="glyphicon glyphicon-book"></i></span> Publications</td><td>' + display.Publications + '</td><td><a href="' + UQL.cef.reports.Publications + '" target="_blank">View</a></td></tr>';
     }
     if (display.hasOwnProperty('Collaborations')) {
-      content += '<tr><td><span><i class="glyphicon glyphicon-transfer"></i></span> Collaborations</td><td>' + display.Collaborations + '</td></tr>';
+      content += '<tr><td><span><i class="glyphicon glyphicon-transfer"></i></span> Collaborations</td><td>' + display.Collaborations + '</td><td><a href="' + UQL.cef.reports.Collaborations + '" target="_blank">View</a></td></tr>';
     }
     if (display.hasOwnProperty('Agreements')) {
-      content += '<tr><td><span><i class="glyphicon glyphicon-thumbs-up"></i></span> Agreements</td><td>' + display.Agreements + '</td></tr>';
+      content += '<tr><td><span><i class="glyphicon glyphicon-thumbs-up"></i></span> Agreements</td><td>' + display.Agreements + '</td><td><a href="' + UQL.cef.reports.Agreements + '" target="_blank">View</a></td></tr>';
     }
     if (display.hasOwnProperty('Total')) {
-      content += '<tr><td><span><i class="glyphicon glyphicon-plus-sign"></i></span> Total</td><td>' + display.Total + '</td></tr>';
+      content += '<tr><td><span><i class="glyphicon glyphicon-plus-sign"></i></span> Total</td><td>' + display.Total + '</td><td>&nbsp;</td></tr>';
     }
     content += '</table>';
 

@@ -14,6 +14,12 @@ UQL.pef = {
   chart: null,
   mapLink: 'http://www.mis.admin.uq.edu.au/Content/Dashboards/PartnerEngagementFramework/PEF.swf',
   spreadSheet: 'https://spreadsheets.google.com/tq?key=1gKxL8oZbjBRmNTJpFLnVWhrAqVLr98PBSv4dDn4hx7A',
+  reports: {
+    Staff: 'https://mis-xi-web.mis.admin.uq.edu.au/OpenDocument/opendoc/openDocument.jsp?sIDType=CUID&iDocID=AeuL7e2Lqn9MrqC4AeTpaX0',
+    Publications: 'https://mis-xi-web.mis.admin.uq.edu.au/OpenDocument/opendoc/openDocument.jsp?sIDType=CUID&iDocID=AUTClgWDoVRDsZt2N8OOt0Q',
+    Collaborations: 'https://mis-xi-web.mis.admin.uq.edu.au/OpenDocument/opendoc/openDocument.jsp?sIDType=CUID&iDocID=AQm8.8lGwaRGnIB15RqNZ78',
+    Students: 'https://mis-xi-web.mis.admin.uq.edu.au/OpenDocument/opendoc/openDocument.jsp?sIDType=CUID&iDocID=AeH8bq9vca9LhqjNqbZvvZs'
+  },
   markerImage: 'images/mm_20_white.png',
   mapZoom: 3,
   mapZoomed: 7,
@@ -39,7 +45,7 @@ UQL.pef = {
     lng: 135
   },
   markers : {},
-  infoWindows : {},
+  infoWindows : {}
 };
 
 /**
@@ -142,24 +148,24 @@ UQL.pef.makeInfoWindow = function (title, image, display)
   if (image !== null) {
     content += '<div class="col-sm-4"><img src="' + image + '" alt="' + title + ' Logo" class="img-responsive img-thumbnail"/></div><div class="col-sm-8">';
   }
-  content += '<h4>' + title + '</h4>' +
-  '<table class="table" role="table">';
+  content += '<h4>' + title + '</h4>' + '<table class="table" role="table">';
+  content += '<tr><th>Metric</th><th>Value</th><th>Report</th></tr>';
 
-  content += '<tr><td><span><i class="glyphicon glyphicon-globe"></i></span> Location</td><td>' + display.City + ', ' + display.Country + '</td></tr>';
+  content += '<tr><td><span><i class="glyphicon glyphicon-globe"></i></span> Location</td><td>' + display.City + ', ' + display.Country + '</td><td>&nbsp;</td></tr>';
   if (display.hasOwnProperty('Students')) {
-    content += '<tr><td><span><i class="glyphicon glyphicon-user"></i></span> Students</td><td>' + display.Students + '</td></tr>';
+    content += '<tr><td><span><i class="glyphicon glyphicon-user"></i></span> Students</td><td>' + display.Students + '</td><td><a href="' + UQL.pef.reports.Students + '" target="_blank">View</a></td></tr>'
   }
   if (display.hasOwnProperty('Staff')) {
-    content += '<tr><td><span><i class="glyphicon glyphicon-user"></i></span> Staff</td><td>' + display.Staff + '</td></tr>';
+    content += '<tr><td><span><i class="glyphicon glyphicon-user"></i></span> Staff</td><td>' + display.Staff + '</td><td><a href="' + UQL.pef.reports.Staff + '" target="_blank">View</a></td></tr>';
   }
   if (display.hasOwnProperty('Publications')) {
-    content += '<tr><td><span><i class="glyphicon glyphicon-book"></i></span> Publications</td><td>' + display.Publications + '</td></tr>';
+    content += '<tr><td><span><i class="glyphicon glyphicon-book"></i></span> Publications</td><td>' + display.Publications + '</td><td><a href="' + UQL.pef.reports.Publications + '" target="_blank">View</a></td></tr>';
   }
   if (display.hasOwnProperty('Collaborations')) {
-    content += '<tr><td><span><i class="glyphicon glyphicon-transfer"></i></span> Collaborations</td><td>' + display.Collaborations + '</td></tr>';
+    content += '<tr><td><span><i class="glyphicon glyphicon-transfer"></i></span> Collaborations</td><td>' + display.Collaborations + '</td><td><a href="' + UQL.pef.reports.Collaborations + '" target="_blank">View</a></td></tr>';
   }
   if (display.hasOwnProperty('Web Address')) {
-    content += '<tr><td><span><i class="glyphicon glyphicon-link"></i></span> Website</td><td><a href="' + display['Web Address'] + '" target="_blank">' + display['Web Address'] + '</a></td></tr>';
+    content += '<tr><td><span><i class="glyphicon glyphicon-link"></i></span> Website</td><td><a href="' + display['Web Address'] + '" target="_blank">' + display['Web Address'] + '</a></td><td>&nbsp;</td></tr>';
   }
 
   content += '</table></div>';
