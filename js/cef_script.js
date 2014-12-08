@@ -16,6 +16,7 @@ UQL.cef = {
   chart: null,
   chartTable: null,
   colors: ['FFCCFF', '60227C'],
+  mapLink: 'http://www.mis.admin.uq.edu.au/Content/Dashboards/CountryEngagementFramework/CEF.swf',
   spreadSheet: 'https://spreadsheets.google.com/tq?key=1K4Bmd3HDPVmuGneSeEUz-hWHI5XcXY-lykkTEgC8jT0',
   columns: {
     country: 0,
@@ -161,7 +162,7 @@ UQL.cef.drawRegionsMap = function (dataTable, year, column, region) {
       hideColumns.push(i);
     }
   }
-  
+
   if (hideColumns.length > 0) {
     mapDataView.hideColumns(hideColumns);
   }
@@ -222,3 +223,9 @@ $('#show-map').click(function () {
 });
 
 
+/*
+ * jQuery function to go to cef map
+ */
+$('#go-to-cef-map').click(function () {
+  window.open(UQL.cef.mapLink);
+});

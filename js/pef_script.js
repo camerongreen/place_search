@@ -12,6 +12,7 @@ UQL.pef = {
   dataTable: null,
   map: null,
   chart: null,
+  mapLink: 'http://www.mis.admin.uq.edu.au/Content/Dashboards/PartnerEngagementFramework/PEF.swf',
   spreadSheet: 'https://spreadsheets.google.com/tq?key=1gKxL8oZbjBRmNTJpFLnVWhrAqVLr98PBSv4dDn4hx7A',
   markerImage: 'images/mm_20_white.png',
   mapZoom: 3,
@@ -338,4 +339,11 @@ $('#reset-map').click(function () {
   UQL.pef.map.setZoom(UQL.pef.mapZoom);
 });
 
+
+/*
+ * jQuery function to go to pef map
+ */
+$('#go-to-pef-map').click(function () {
+  window.open(UQL.pef.mapLink);
+});
 
