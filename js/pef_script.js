@@ -1,4 +1,3 @@
-/*global google */
 /**
  * Visualisation to display PEF statistics globally
  *
@@ -129,7 +128,7 @@ UQL.pef.addPlacemark = function (map, lat, lng, title, image, display)
 
   UQL.pef.infoWindows[key] = UQL.pef.makeInfoWindow(title, image, display);
 
-  google.maps.event.addListener(UQL.pef.markers[key], 'click', function (event) {
+  google.maps.event.addListener(UQL.pef.markers[key], 'click', function () {
     UQL.pef.infoWindows[key].open(map, UQL.pef.markers[key]);
   });
 };
@@ -174,11 +173,9 @@ UQL.pef.makeInfoWindow = function (title, image, display)
     content += '</div>';
   }
 
-  var infoWindow = new google.maps.InfoWindow({
+  return new google.maps.InfoWindow({
     content: content
   });
-
-  return infoWindow;
 }
 ;
 
@@ -223,10 +220,11 @@ UQL.pef.drawToolbar = function (spreadSheet) {
   var container = document.getElementById('pef-toolbar-div');
   google.visualization.drawToolbar(container, components);
 
-  // dodgy hacks to make it look bootstrappy
-  $('#pef-toolbar-div > span > div').removeClass('charts-menu-button').addClass('form-control').addClass('btn').addClass('btn-success');
-  $('#pef-toolbar-div div').removeClass('button-inner-box').removeClass('charts-menu-button-inner-box').removeClass('charts-menu-button-outer-box');
-  $('#pef-toolbar-div > span span').html('Export data');
+  // dodgy hacks to make it look bootstrap-y
+  var pefToolbar = $('#pef-toolbar-div');
+  $('> span > div', pefToolbar).removeClass('charts-menu-button').addClass('form-control').addClass('btn').addClass('btn-success');
+  $('div', pefToolbar).removeClass('button-inner-box').removeClass('charts-menu-button-inner-box').removeClass('charts-menu-button-outer-box');
+  $('> span span', pefToolbar).html('Export data');
 };
 
 

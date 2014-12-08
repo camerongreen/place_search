@@ -1,4 +1,3 @@
-/*global google */
 /**
  * Visualisation to display CEF statistics globally
  *
@@ -136,9 +135,9 @@ UQL.cef.getCountryInfo = function (dataView) {
  * Shows a google GeoChart visualisation to the '#map' html element
  *
  * @param {Object} dataTable
- * @param Mixed year year to display
- * @param Integer column to display from spreadsheet
- * @param numeric region to display on map
+ * @param {*} year year to display
+ * @param {Number} column to display from spreadsheet
+ * @param {Number} region to display on map
  */
 UQL.cef.drawRegionsMap = function (dataTable, year, column, region) {
   var options = {
@@ -203,10 +202,11 @@ UQL.cef.drawToolbar = function (spreadSheet) {
   var container = document.getElementById('cef-toolbar-div');
   google.visualization.drawToolbar(container, components);
 
-  // dodgy hacks to make it look bootstrappy
-  $('#cef-toolbar-div > span > div').removeClass('charts-menu-button').addClass('form-control').addClass('btn').addClass('btn-success');
-  $('#cef-toolbar-div div').removeClass('button-inner-box').removeClass('charts-menu-button-inner-box').removeClass('charts-menu-button-outer-box');
-  $('#cef-toolbar-div > span span').html('Export data');
+  // dodgy hacks to make it look bootstrap-y
+  var cefToolbar = $('#cef-toolbar-div');
+  $('> span > div', cefToolbar).removeClass('charts-menu-button').addClass('form-control').addClass('btn').addClass('btn-success');
+  $('div', cefToolbar).removeClass('button-inner-box').removeClass('charts-menu-button-inner-box').removeClass('charts-menu-button-outer-box');
+  $('> span span', cefToolbar).html('Export data');
 };
 
 // go ...
@@ -222,10 +222,10 @@ $('#show-map').click(function () {
   var region = $("#region").val();
 
   if (parseInt(region, 10) !== 0) {
-    UQL.cef.drawRegionsMap(UQL.cef.dataTable, year, column, region)
+    UQL.cef.drawRegionsMap(UQL.cef.dataTable, year, column, region);
     UQL.cef.drawDataView(UQL.cef.dataView);
   } else {
-    UQL.cef.drawRegionsMap(UQL.cef.dataTable, year, column)
+    UQL.cef.drawRegionsMap(UQL.cef.dataTable, year, column);
     UQL.cef.drawDataView(UQL.cef.dataView);
   }
 });
