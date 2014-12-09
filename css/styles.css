@@ -38,3 +38,7 @@ form select {
   /*color: #60227C;*/
   color: #BBB;
 }
+
+ul.map-heading li a {
+  margin-bottom: 14px;
+}
