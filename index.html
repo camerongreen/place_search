@@ -1,26 +1,23 @@
 <!DOCTYPE html>
 <head>
-  <title>Partner Engagement</title>
+  <title>Place Search</title>
   <link rel="stylesheet" type="text/css" href="css/styles.css"/>
   <link rel="stylesheet" type="text/css" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css"/>
   <link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/themes/smoothness/jquery-ui.css"/>
 </head>
 <body>
-<ul class="list-inline map-heading">
-  <li><h1>Partner Engagement</h1></li>
-  <li><a href="#" id="go-to-pef-map" class="btn btn-success">Link to PEF</a></li>
-</ul>
-<div id="pef-loader">
+<h1>Place Search</h1>
+<div id="ps-loader">
   <img src="//cdnjs.cloudflare.com/ajax/libs/semantic-ui/0.19.3/images/loader-large.gif" alt="Loading"/>
 </div>
-<div id="pef-map">
+<div id="ps-map">
 </div>
 <!-- /#map -->
 <form class="form-inline" role="form">
   <button type="button" id="reset-map" class="btn btn-success">Reset Map</button>
-  <div id="pef-toolbar-div" class="form-group pull-right"></div>
+  <div id="ps-toolbar-div" class="form-group pull-right"></div>
 </form>
-<div id="pef-data-table">
+<div id="ps-data-table">
 </div>
 <!-- /#data-table -->
 <script src="//code.jquery.com/jquery-latest.js"></script>
@@ -28,6 +25,6 @@
 <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js"></script>
 <script src="//www.google.com/jsapi"></script>
 <script src="//maps.googleapis.com/maps/api/js"></script>
-<script src="js/pef_script.js"></script>
+<script src="js/place-search.js"></script>
 </body>
 </html>

@@ -5,20 +5,13 @@
  * @date  2014-10-29
  */
 // create a quasi namespace
-var UQL = UQL || {};
+var PBF = PBF || {};
 
-UQL.pef = {
+PBF.pef = {
   dataTable: null,
   map: null,
   chart: null,
-  mapLink: 'http://www.mis.admin.uq.edu.au/Content/Dashboards/PartnerEngagementFramework/PEF.swf',
   spreadSheet: 'https://spreadsheets.google.com/tq?key=1gKxL8oZbjBRmNTJpFLnVWhrAqVLr98PBSv4dDn4hx7A',
-  reports: {
-    Staff: 'https://mis-xi-web.mis.admin.uq.edu.au/OpenDocument/opendoc/openDocument.jsp?sIDType=CUID&iDocID=AeuL7e2Lqn9MrqC4AeTpaX0',
-    Publications: 'https://mis-xi-web.mis.admin.uq.edu.au/OpenDocument/opendoc/openDocument.jsp?sIDType=CUID&iDocID=AUTClgWDoVRDsZt2N8OOt0Q',
-    Collaborations: 'https://mis-xi-web.mis.admin.uq.edu.au/OpenDocument/opendoc/openDocument.jsp?sIDType=CUID&iDocID=AQm8.8lGwaRGnIB15RqNZ78',
-    Students: 'https://mis-xi-web.mis.admin.uq.edu.au/OpenDocument/opendoc/openDocument.jsp?sIDType=CUID&iDocID=AeH8bq9vca9LhqjNqbZvvZs'
-  },
   markerImage: 'images/mm_20_white.png',
   mapZoom: 3,
   mapZoomed: 7,
@@ -29,16 +22,6 @@ UQL.pef = {
     'Lng',
     'Geo Address'
   ],
-  address: {
-    lat: -27.497516,
-    lng: 153.013206,
-    title: 'The University of Queensland',
-    image: 'images/UQ.png',
-    details: {
-      City: 'Brisbane',
-      Country: 'Australia'
-    }
-  },
   mapCentre: {
     lat: 2,
     lng: 135
@@ -50,8 +33,8 @@ UQL.pef = {
 /**
  * Loads a google spreadsheet
  */
-UQL.pef.loadVisualisations = function () {
-  new google.visualization.Query(UQL.pef.spreadSheet).send(UQL.pef.drawVisualisations);
+PBF.pef.loadVisualisations = function () {
+  new google.visualization.Query(PBF.pef.spreadSheet).send(PBF.pef.drawVisualisations);
 };
 
 /**
@@ -60,14 +43,14 @@ UQL.pef.loadVisualisations = function () {
  *
  * @param response
  */
-UQL.pef.drawVisualisations = function (response) {
-  UQL.pef.dataTable = response.getDataTable();
+PBF.pef.drawVisualisations = function (response) {
+  PBF.pef.dataTable = response.getDataTable();
 
   $('#pef-loader').hide();
-  UQL.pef.drawMap();
-  UQL.pef.drawConnections(UQL.pef.map, UQL.pef.dataTable);
-  UQL.pef.drawDataTable(UQL.pef.dataTable);
-  UQL.pef.drawToolbar(UQL.pef.spreadSheet);
+  PBF.pef.drawMap();
+  PBF.pef.drawConnections(PBF.pef.map, PBF.pef.dataTable);
+  PBF.pef.drawDataTable(PBF.pef.dataTable);
+  PBF.pef.drawToolbar(PBF.pef.spreadSheet);
 };
 
 /**
@@ -76,21 +59,21 @@ UQL.pef.drawVisualisations = function (response) {
  * @param {Object}  map
  * @param {Object}  dataTable
  */
-UQL.pef.drawConnections = function (map, dataTable) {
-  UQL.pef.addPlacemark(map, UQL.pef.address.lat, UQL.pef.address.lng, UQL.pef.address.title, UQL.pef.address.image, UQL.pef.address.details);
+PBF.pef.drawConnections = function (map, dataTable) {
+  PBF.pef.addPlacemark(map, PBF.pef.address.lat, PBF.pef.address.lng, PBF.pef.address.title, PBF.pef.address.image, PBF.pef.address.details);
 
   for (var r = 0, nr = dataTable.getNumberOfRows(); r < nr; r++) {
-    var row = UQL.pef.getRow(dataTable, r);
+    var row = PBF.pef.getRow(dataTable, r);
     var scale = .1;
-    UQL.pef.drawLine(map, UQL.pef.address.lat, UQL.pef.address.lng, row.Lat, row.Lng, scale);
-    UQL.pef.addPlacemark(map, row.Lat, row.Lng, row['Partner Name'], null, row);
+    PBF.pef.drawLine(map, PBF.pef.address.lat, PBF.pef.address.lng, row.Lat, row.Lng, scale);
+    PBF.pef.addPlacemark(map, row.Lat, row.Lng, row['Partner Name'], null, row);
   }
 };
 
 /**
  * gets a Row into an object for easier use
  */
-UQL.pef.getRow = function (dataTable, rowNum) {
+PBF.pef.getRow = function (dataTable, rowNum) {
   var returnVal = {};
   for (var c = 0, nc = dataTable.getNumberOfColumns(); c < nc; c++) {
     var columnName = dataTable.getColumnLabel(c);
@@ -114,22 +97,22 @@ UQL.pef.getRow = function (dataTable, rowNum) {
  * @param image
  * @param {Object} display  Display in popup
  */
-UQL.pef.addPlacemark = function (map, lat, lng, title, image, display)
+PBF.pef.addPlacemark = function (map, lat, lng, title, image, display)
 {
   var myLatLng = new google.maps.LatLng(lat, lng);
-  var icon = new google.maps.MarkerImage(UQL.pef.markerImage);
+  var icon = new google.maps.MarkerImage(PBF.pef.markerImage);
   var key = title + lat + lng;
-  UQL.pef.markers[key] = new google.maps.Marker({
+  PBF.pef.markers[key] = new google.maps.Marker({
     map: map,
     position: myLatLng,
     title: title,
     icon: icon
   });
 
-  UQL.pef.infoWindows[key] = UQL.pef.makeInfoWindow(title, image, display);
+  PBF.pef.infoWindows[key] = PBF.pef.makeInfoWindow(title, image, display);
 
-  google.maps.event.addListener(UQL.pef.markers[key], 'click', function () {
-    UQL.pef.infoWindows[key].open(map, UQL.pef.markers[key]);
+  google.maps.event.addListener(PBF.pef.markers[key], 'click', function () {
+    PBF.pef.infoWindows[key].open(map, PBF.pef.markers[key]);
   });
 };
 
@@ -141,7 +124,7 @@ UQL.pef.addPlacemark = function (map, lat, lng, title, image, display)
  * @param image
  * @param {Object} display  Display in popup
  */
-UQL.pef.makeInfoWindow = function (title, image, display)
+PBF.pef.makeInfoWindow = function (title, image, display)
 {
   var content = '<div class="pef-info-window-content">';
   if (image !== null) {
@@ -152,16 +135,16 @@ UQL.pef.makeInfoWindow = function (title, image, display)
 
   content += '<tr><td><span><i class="glyphicon glyphicon-globe"></i></span> Location</td><td>' + display.City + ', ' + display.Country + '</td><td>&nbsp;</td></tr>';
   if (display.hasOwnProperty('Students')) {
-    content += '<tr><td><span><i class="glyphicon glyphicon-user"></i></span> Students</td><td>' + display.Students + '</td><td><a href="' + UQL.pef.reports.Students + '" target="_blank">View</a></td></tr>'
+    content += '<tr><td><span><i class="glyphicon glyphicon-user"></i></span> Students</td><td>' + display.Students + '</td><td><a href="' + PBF.pef.reports.Students + '" target="_blank">View</a></td></tr>'
   }
   if (display.hasOwnProperty('Staff')) {
-    content += '<tr><td><span><i class="glyphicon glyphicon-user"></i></span> Staff</td><td>' + display.Staff + '</td><td><a href="' + UQL.pef.reports.Staff + '" target="_blank">View</a></td></tr>';
+    content += '<tr><td><span><i class="glyphicon glyphicon-user"></i></span> Staff</td><td>' + display.Staff + '</td><td><a href="' + PBF.pef.reports.Staff + '" target="_blank">View</a></td></tr>';
   }
   if (display.hasOwnProperty('Publications')) {
-    content += '<tr><td><span><i class="glyphicon glyphicon-book"></i></span> Publications</td><td>' + display.Publications + '</td><td><a href="' + UQL.pef.reports.Publications + '" target="_blank">View</a></td></tr>';
+    content += '<tr><td><span><i class="glyphicon glyphicon-book"></i></span> Publications</td><td>' + display.Publications + '</td><td><a href="' + PBF.pef.reports.Publications + '" target="_blank">View</a></td></tr>';
   }
   if (display.hasOwnProperty('Collaborations')) {
-    content += '<tr><td><span><i class="glyphicon glyphicon-transfer"></i></span> Collaborations</td><td>' + display.Collaborations + '</td><td><a href="' + UQL.pef.reports.Collaborations + '" target="_blank">View</a></td></tr>';
+    content += '<tr><td><span><i class="glyphicon glyphicon-transfer"></i></span> Collaborations</td><td>' + display.Collaborations + '</td><td><a href="' + PBF.pef.reports.Collaborations + '" target="_blank">View</a></td></tr>';
   }
   if (display.hasOwnProperty('Web Address')) {
     content += '<tr><td><span><i class="glyphicon glyphicon-link"></i></span> Website</td><td><a href="' + display['Web Address'] + '" target="_blank">' + display['Web Address'] + '</a></td><td>&nbsp;</td></tr>';
@@ -190,7 +173,7 @@ UQL.pef.makeInfoWindow = function (title, image, display)
  * @param eLng
  * @param scale 0.1 - 1 for thickness of line
  */
-UQL.pef.drawLine = function (map, sLat, sLng, eLat, eLng, scale) {
+PBF.pef.drawLine = function (map, sLat, sLng, eLat, eLng, scale) {
   var line = [
     new google.maps.LatLng(sLat, sLng),
     new google.maps.LatLng(eLat, eLng)
@@ -200,8 +183,8 @@ UQL.pef.drawLine = function (map, sLat, sLng, eLat, eLng, scale) {
     map: map,
     path: line,
     strokeWeight: Math.ceil(scale * 10),
-    strokeOpacity: UQL.pef.lineOpacity,
-    strokeColor: UQL.pef.lineColour
+    strokeOpacity: PBF.pef.lineOpacity,
+    strokeColor: PBF.pef.lineColour
   });
 };
 
@@ -211,7 +194,7 @@ UQL.pef.drawLine = function (map, sLat, sLng, eLat, eLng, scale) {
  *
  * @param {String}  spreadSheet
  */
-UQL.pef.drawToolbar = function (spreadSheet) {
+PBF.pef.drawToolbar = function (spreadSheet) {
   var components = [
     {type: 'html', datasource: spreadSheet},
     {type: 'csv', datasource: spreadSheet}
@@ -232,9 +215,9 @@ UQL.pef.drawToolbar = function (spreadSheet) {
  * Shows a google GeoChart visualisation to the '#map' html element
  *
  * Globals:
- *   UQL.pef.dataTable
+ *   PBF.pef.dataTable
  */
-UQL.pef.drawMap = function () {
+PBF.pef.drawMap = function () {
   var styles = [
     {
       featureType: "road",
@@ -266,40 +249,40 @@ UQL.pef.drawMap = function () {
   ];
 
   var mapOptions = {
-    center: {lat: UQL.pef.mapCentre.lat, lng: UQL.pef.mapCentre.lng},
-    zoom: UQL.pef.mapZoom,
+    center: {lat: PBF.pef.mapCentre.lat, lng: PBF.pef.mapCentre.lng},
+    zoom: PBF.pef.mapZoom,
     minZoom: 2,
     //mapTypeId: google.maps.MapTypeId.SATELLITE
     //mapTypeId: google.maps.MapTypeId.HYBRID,
     mapTypeId: google.maps.MapTypeId.ROADMAP,
     styles: styles
   };
-  UQL.pef.map = new google.maps.Map(document.getElementById('pef-map'), mapOptions);
+  PBF.pef.map = new google.maps.Map(document.getElementById('pef-map'), mapOptions);
 };
 
 /**
  * Allow user to click on table and zoom map
  */
-UQL.pef.rowSelectFunction = function () {
-  var select = UQL.pef.chart.getSelection();
+PBF.pef.rowSelectFunction = function () {
+  var select = PBF.pef.chart.getSelection();
   if (select.length > 0) {
-    var row = UQL.pef.getRow(UQL.pef.dataTable, select[0].row);
+    var row = PBF.pef.getRow(PBF.pef.dataTable, select[0].row);
     var pos = new google.maps.LatLng(row.Lat, row.Lng);
-    UQL.pef.map.setCenter(pos);
-    UQL.pef.map.setZoom(UQL.pef.mapZoomed);
+    PBF.pef.map.setCenter(pos);
+    PBF.pef.map.setZoom(PBF.pef.mapZoomed);
     var key = row['Partner Name'] + row.Lat + row.Lng;
-    UQL.pef.closeAllWindows();
-    UQL.pef.infoWindows[key].open(UQL.pef.map, UQL.pef.markers[key]);
+    PBF.pef.closeAllWindows();
+    PBF.pef.infoWindows[key].open(PBF.pef.map, PBF.pef.markers[key]);
   }
 };
 
 /**
  * Close all pop up windows
  */
-UQL.pef.closeAllWindows = function () {
-  for (var key in UQL.pef.infoWindows) {
-    if (UQL.pef.infoWindows.hasOwnProperty(key)) {
-      UQL.pef.infoWindows[key].close();
+PBF.pef.closeAllWindows = function () {
+  for (var key in PBF.pef.infoWindows) {
+    if (PBF.pef.infoWindows.hasOwnProperty(key)) {
+      PBF.pef.infoWindows[key].close();
     }
   }
 };
@@ -309,38 +292,38 @@ UQL.pef.closeAllWindows = function () {
  *
  * @param dataTable
  */
-UQL.pef.drawDataTable = function (dataTable) {
+PBF.pef.drawDataTable = function (dataTable) {
   var options = {};
 
   var displayDataView = new google.visualization.DataView(dataTable);
 
   var hideColumnIndexes = [];
   for (var c = 0, l = displayDataView.getNumberOfColumns(); c < l; c++) {
-    var columnName = UQL.pef.dataTable.getColumnLabel(c);
-    if (UQL.pef.hideColumns.indexOf(columnName) !== -1) {
+    var columnName = PBF.pef.dataTable.getColumnLabel(c);
+    if (PBF.pef.hideColumns.indexOf(columnName) !== -1) {
       hideColumnIndexes.push(c);
     }
   }
 
   displayDataView.hideColumns(hideColumnIndexes);
 
-  UQL.pef.chart = new google.visualization.Table(document.getElementById('pef-data-table'));
-  UQL.pef.chart.draw(displayDataView, options);
-  google.visualization.events.addListener(UQL.pef.chart, 'select', UQL.pef.rowSelectFunction);
+  PBF.pef.chart = new google.visualization.Table(document.getElementById('pef-data-table'));
+  PBF.pef.chart.draw(displayDataView, options);
+  google.visualization.events.addListener(PBF.pef.chart, 'select', PBF.pef.rowSelectFunction);
 };
 
 
 // go ...
 google.load('visualization', '1', {packages: ['table']});
-google.maps.event.addDomListener(window, 'load', UQL.pef.loadVisualisations);
+google.maps.event.addDomListener(window, 'load', PBF.pef.loadVisualisations);
 
 /*
  * jQuery function to reset map
  */
 $('#reset-map').click(function () {
-  var pos = new google.maps.LatLng(UQL.pef.mapCentre.lat, UQL.pef.mapCentre.lng);
-  UQL.pef.map.setCenter(pos);
-  UQL.pef.map.setZoom(UQL.pef.mapZoom);
+  var pos = new google.maps.LatLng(PBF.pef.mapCentre.lat, PBF.pef.mapCentre.lng);
+  PBF.pef.map.setCenter(pos);
+  PBF.pef.map.setZoom(PBF.pef.mapZoom);
 });
 
 
@@ -348,6 +331,6 @@ $('#reset-map').click(function () {
  * jQuery function to go to pef map
  */
 $('#go-to-pef-map').click(function () {
-  window.open(UQL.pef.mapLink);
+  window.open(PBF.pef.mapLink);
 });
 
