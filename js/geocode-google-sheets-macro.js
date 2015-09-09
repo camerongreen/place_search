@@ -6,16 +6,18 @@
  */
 
 // main sheet we are working with
-var spreadSheet;
+var spreadsheet;
 
 // Set up column names well use
 var addressColumnsHeadings = [
   'Street',
-  'Town',
+  'Suburb',
+  'State',
   'Postcode'
 ];
 
-var geoColumnHeading = 'Geocoding Result';
+var geoColumnHeading = 'Geocoded address';
+var geoResultColumnHeading = 'Geocoded result';
 var latColumnHeading = 'Lat';
 var lngColumnHeading = 'Lng';
 
@@ -23,8 +25,8 @@ var lngColumnHeading = 'Lng';
  * Given a row, return the index of the column with the
  * given text value
  *
- * @param {Array[String]} headings
- * @param {String} searchText
+ * @param {string[]} headings
+ * @param {string} searchText
  */
 function getColumnIndex(headings, searchText) {
   return headings.indexOf(searchText) + 1;
@@ -32,6 +34,8 @@ function getColumnIndex(headings, searchText) {
 
 /**
  * Get the first sheet in the spreadsheet
+ *
+ * @param {Object} sheet
  */
 function getFirstSheet(sheet) {
   return sheet.getSheets()[0];
@@ -39,16 +43,20 @@ function getFirstSheet(sheet) {
 
 /**
  * Get the heading row
+ *
+ * @param {Object} sheet
  */
 function getHeadings(sheet) {
   var firstRow = sheet.getRange(1, 1, 1, sheet.getLastColumn());
   var firstRowValues = firstRow.getValues();
-  var headings = firstRowValues[0];
-  return headings;
+  return firstRowValues[0];
 }
 
 /**
  * Make an address from the row values
+ *
+ * @param {string[]} addressColumns
+ * @param {string[]} values
  */
 function makeAddress(addressColumns, values) {
   var returnVal = [];
@@ -65,16 +73,17 @@ function geocodeAddresses() {
   var geocoder = Maps.newGeocoder();
   var location;
   var sheet = getFirstSheet(spreadsheet);
-  var end = spreadsheet.getLastRow();
-  var headings = getHeadings();
+  var end = sheet.getLastRow();
+  var headings = getHeadings(sheet);
   var geoColumn = getColumnIndex(headings, geoColumnHeading);
+  var geoResultColumn = getColumnIndex(headings, geoResultColumnHeading);
   var latColumn = getColumnIndex(headings, latColumnHeading);
   var lngColumn = getColumnIndex(headings, lngColumnHeading);
 
   var addressColumns = [
-    getColumnIndex(addressColumnsHeadings.Street),
-    getColumnIndex(addressColumnsHeadings.Town),
-    getColumnIndex(addressColumnsHeadings.Postcode)
+    getColumnIndex(headings, addressColumnsHeadings.Street),
+    getColumnIndex(headings, addressColumnsHeadings.Town),
+    getColumnIndex(headings, addressColumnsHeadings.Postcode)
   ];
 
   // skip first row as headings
@@ -84,20 +93,18 @@ function geocodeAddresses() {
 
     var address = makeAddress(addressColumns, rowValues);
 
-    // Geocode the address and plug the lat, lng pair into the
-    // 2nd and 3rd elements of the current range row.
-    location = geocoder.geocode(address);
     cells.getCell(i, geoColumn).setValue(address);
+
+    location = geocoder.geocode(address);
+    cells.getCell(i, geoResultColumn).setValue(location.status);
 
     // if we get OK then set the lat lng values
     if (location.status === 'OK') {
-      lat = location["results"][0]["geometry"]["location"]["lat"];
-      lng = location["results"][0]["geometry"]["location"]["lng"];
+      var lat = location.results[0].geometry.location.lat;
+      var lng = location.results[0].geometry.location.lng;
 
       cells.getCell(i, latColumn).setValue(lat);
       cells.getCell(i, lngColumn).setValue(lng);
-    } else {
-      cells.getCell(i, geoColumn).setValue('Not found - ' + location.status);
     }
   }
 }
@@ -112,10 +119,10 @@ function geocodeAddresses() {
  * https://developers.google.com/apps-script/service_spreadsheet
  */
 function onOpen() {
-  spreadSheet = SpreadsheetApp.getActiveSpreadsheet();
+  spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
   var entries = [{
     name: "Geocode columns",
     functionName: "geocodeAddresses"
   }];
-  spreadSheet.addMenu("Macros", entries);
+  spreadsheet.addMenu("Macros", entries);
 };
