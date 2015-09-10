@@ -1,41 +1,52 @@
 html {
-  width: 100%;
+    width: 100%;
 }
 
 body {
-  padding: 1em;
-  width: 100%;
+    padding: 1em;
+    width: 100%;
+}
+
+div.container {
+    margin: auto;
+    width: 80%;
 }
 
 #ps-map {
-  width: 100%;
-  height: 650px;
-  margin-bottom: 2em;
+    width: 100%;
+    height: 500px;
+    margin-bottom: 2em;
 }
 
-#ps-data-table {
-  margin-top: 2em;
+#ps-data-table > div {
+    margin-top: 2em;
+    width: 100%;
+}
+
+#ps-data-table table {
+    width: 100%;
 }
 
 form button,
 form select {
-  margin-right: 1ex;
+    margin-right: 1ex;
 }
 
 #ps-loader {
-  height: 100px;
-  width: 100px;
-  margin: auto;
+    height: 100px;
+    width: 100px;
+    margin: auto;
 }
 
 .ps-info-window-content img {
-  max-width: 150px;
+    max-width: 150px;
 }
+
 .ps-info-window-content td span {
-  /*color: #60227C;*/
-  color: #BBB;
+    /*color: #60227C;*/
+    color: #BBB;
 }
 
 ul.map-heading li a {
-  margin-bottom: 14px;
+    margin-bottom: 14px;
 }
