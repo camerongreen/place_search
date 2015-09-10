@@ -317,6 +317,7 @@ var PBF = PBF || {};
    * @returns {boolean}
    */
   PBF.ps.checkProduct = function (value) {
+    var product = $('#product').val();
     var values = value.split(',');
     for (var i = 0, l = values.length; i < l; i++) {
       if (values[i].trim().toLowerCase() === product.trim().toLowerCase()) {
