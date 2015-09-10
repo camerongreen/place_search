@@ -23,7 +23,7 @@ var PBF = PBF || {};
       'Lat',
       'Lat',
       'Lng',
-//      'Km',
+      'Km',
       'Geocoded address',
       'Geocoding date',
       'Geocode result'
@@ -96,7 +96,9 @@ var PBF = PBF || {};
     for (var r = 0, nr = dataView.getNumberOfRows(); r < nr; r++) {
       var row = PBF.ps.getRow(dataView, r);
       PBF.ps.addPlacemark(map, row.Lat, row.Lng, row.Name, null, row);
-      PBF.ps.addProducts(row.Products);
+      if (row.Products !== null) {
+        PBF.ps.addProducts(row.Products);
+      }
     }
   };
 
@@ -209,7 +211,7 @@ var PBF = PBF || {};
     content += '<h4>' + title + '</h4>' + '<table class="table" role="table">';
 
     for (var key in display) {
-      if (display.hasOwnProperty(key) && (key !== 'Name') && (PBF.ps.hideColumns.indexOf(key) === -1)) {
+      if (display.hasOwnProperty(key) && (key !== 'Name') && (PBF.ps.hideColumns.indexOf(key) === -1) && (display[key] !== null)) {
         content += '<tr><td><i class="glyphicon glyphicon-star-empty"></i></span> ' + key + '</td><td>' + display[key] + '</td></tr>';
       }
     }
