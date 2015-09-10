@@ -62,8 +62,9 @@ PBF.ps.initVisualisations = function (response) {
 /**
  * Draws the map and dataview from current state of global arrays
  */
-PBF.ps.drawVisualisations = function() {
+PBF.ps.drawVisualisations = function () {
   PBF.ps.drawDataView(PBF.ps.dataView);
+  PBF.ps.removeMapElements();
   PBF.ps.drawPlacemarks(PBF.ps.map, PBF.ps.dataView);
   PBF.ps.fitBounds();
 };
@@ -175,8 +176,16 @@ PBF.ps.addPlacemark = function (map, lat, lng, title, image, display) {
 };
 
 /**
- /**
- * Add a placemark to the map
+ * Removes any existing elements from the map
+ */
+PBF.ps.removeMapElements = function () {
+  PBF.ps.markers = [];
+  PBF.ps.closeAllWindows();
+  PBF.ps.infoWindows = [];
+};
+
+/**
+ * Make an info window popup
  *
  * @param title
  * @param image
@@ -315,6 +324,19 @@ PBF.ps.fitBounds = function () {
   PBF.ps.map.fitBounds(bounds);
 };
 
+PBF.ps.showNoResults = function() {
+  $("#ps-dialog-message").prop('title', 'No results');
+  $("#ps-dialog-message").text("Please change your selections and try again");
+  $( "#ps-dialog-message" ).dialog({
+    modal: true,
+    buttons: {
+      Ok: function() {
+        $( this ).dialog( "close" );
+      }
+    }
+  });
+};
+
 /**
  * Filter the data and map markers according to the
  * form state
@@ -349,16 +371,22 @@ PBF.ps.applyFilters = function () {
       value: state
     });
   }
-  // filter data table view
-  PBF.ps.dataView.setRows(
-    PBF.ps.dataTable.getFilteredRows(filters)
-  );
 
-  // redraw map
-  PBF.ps.drawVisualisations();
+  if (filters.length > 0) {
+    // filter data table view
+    PBF.ps.dataView.setRows(
+      PBF.ps.dataTable.getFilteredRows(filters)
+    );
+  } else {
+    PBF.ps.dataView = new google.visualization.DataView(PBF.ps.dataTable);
+  }
 
-  // fit bounds
-  PBF.ps.fitBounds();
+  if (PBF.ps.dataView.getNumberOfRows() > 0) {
+    // redraw map
+    PBF.ps.drawVisualisations();
+  } else {
+    PBF.ps.showNoResults();
+  }
 };
 
 

@@ -16,6 +16,10 @@ div.container {
     display: none;
 }
 
+#ps-dialog-message {
+    display: none;
+}
+
 #ps-map {
     width: 100%;
     height: 500px;
