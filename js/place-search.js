@@ -101,8 +101,8 @@ PBF.ps.addProducts = function (productsStr) {
   var products = productsStr.split(',');
 
   for (var i = 0, l = products.length; i < l; i++) {
-    if (PBF.ps.products.indexOf(products[i]) === -1) {
-      PBF.ps.products.push(products[i]);
+    if (PBF.ps.products.indexOf(products[i].trim()) === -1) {
+      PBF.ps.products.push(products[i].trim());
     }
   }
 
@@ -340,12 +340,10 @@ PBF.ps.showNoResults = function () {
 /**
  * Filter the data and map markers according to the
  * form state
+ *
+ * @param {string}  instigator
  */
-PBF.ps.applyFilters = function () {
-  var state = $("#state").val();
-  var product = $("#product").val();
-  var search = $("#search").val();
-
+PBF.ps.applyFilters = function (instigator) {
   function checkProduct(value, row, col, dataView) {
     var values = value.split(',');
     for (var i = 0, l = values.length; i < l; i++) {
@@ -355,6 +353,17 @@ PBF.ps.applyFilters = function () {
     }
     return false;
   };
+
+  // only allow either state or search, never both
+  if (instigator === 'state') {
+     $('#search').val('');
+  } else if (instigator === 'search') {
+    $('#state').val('All');
+  }
+
+  var product = $("#product").val();
+  var state = $("#state").val();
+  var search = $("#search").val();
 
   // create filters
   var filters = [];
@@ -378,7 +387,6 @@ PBF.ps.applyFilters = function () {
         value: parts[0]
       });
     }
-
   } else if (state !== 'All') {
     filters.push({
       column: PBF.ps.column.State,
@@ -421,7 +429,7 @@ $(document).ready(function () {
   });
 
   $('#state, #product').change(function () {
-    PBF.ps.applyFilters();
+    PBF.ps.applyFilters(this.id);
   });
 
   $.getJSON('js/postcodes.json', function (results) {
@@ -435,7 +443,7 @@ $(document).ready(function () {
       minLength: 4,
       source: postcodes,
       select: function (event, ui) {
-        PBF.ps.applyFilters();
+        PBF.ps.applyFilters(this.id);
         return false;
       }
     });
