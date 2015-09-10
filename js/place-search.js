@@ -465,6 +465,10 @@ var PBF = PBF || {};
         select: function (event, ui) {
           PBF.ps.applyFilters(this.id, ui.item.obj);
           return false;
+        },
+        focus: function( event, ui ) {
+          $('#search').val(ui.item.label);
+          return false;
         }
       });
     }).fail(function (jqxhr, textStatus, error) {
