@@ -399,7 +399,10 @@ google.maps.event.addDomListener(window, 'load', PBF.ps.loadVisualisations);
  */
 $(document).ready(function () {
   $('#reset-map').click(function () {
-    PBF.ps.fitBounds();
+    PBF.ps.dataView = new google.visualization.DataView(PBF.ps.dataTable);
+    $('#state').val('All');
+    $('#product').val('All');
+    PBF.ps.drawVisualisations();
   });
 
   $('#state, #product').change(function () {
