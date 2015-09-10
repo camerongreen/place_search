@@ -7,14 +7,13 @@ body {
   width: 100%;
 }
 
-#cef-map,
-#pef-map {
+#ps-map {
   width: 100%;
   height: 650px;
   margin-bottom: 2em;
 }
 
-#pef-data-table {
+#ps-data-table {
   margin-top: 2em;
 }
 
@@ -23,18 +22,16 @@ form select {
   margin-right: 1ex;
 }
 
-#cef-loader,
-#pef-loader {
+#ps-loader {
   height: 100px;
   width: 100px;
   margin: auto;
 }
 
-.pef-info-window-content img {
+.ps-info-window-content img {
   max-width: 150px;
 }
-.cef-info-window-content td span,
-.pef-info-window-content td span {
+.ps-info-window-content td span {
   /*color: #60227C;*/
   color: #BBB;
 }
