@@ -23,7 +23,7 @@ var PBF = PBF || {};
       'Lat',
       'Lat',
       'Lng',
-      'Km',
+//      'Km',
       'Geocoded address',
       'Geocoding date',
       'Geocode result'
@@ -32,10 +32,12 @@ var PBF = PBF || {};
       lat: 2,
       lng: 135
     },
-    numClosestVenues: 2,
+    numClosestVenues: 3,
+    circumferenceEarth: 40755,
     markers: [],
     infoWindows: [],
     products: [],
+    searchObject: [],
     column: {}
   };
 
@@ -311,34 +313,21 @@ var PBF = PBF || {};
   };
 
   /**
-   * Callback filter to check if product matches
-   *
-   * @param value
-   * @returns {boolean}
-   */
-  PBF.ps.checkProduct = function (value) {
-    var product = $('#product').val();
-    var values = value.split(',');
-    for (var i = 0, l = values.length; i < l; i++) {
-      if (values[i].trim().toLowerCase() === product.trim().toLowerCase()) {
-        return true;
-      }
-    }
-    return false;
-  };
-
-  /**
-   * Callback filter to check if product matches
+   * Add distance columns to datatable
    *
    * @param {Object} dataTable
    * @param {Object} obj
+   * @param {string} product
    * @returns {int}
    */
-  PBF.ps.sortTableByDistance = function (dataTable, obj) {
+  PBF.ps.addDistance = function (dataTable, obj, product) {
     for (var r = 0, nr = dataTable.getNumberOfRows(); r < nr; r++) {
       var row = PBF.ps.getRow(dataTable, r);
-      dataTable.setCell(r, PBF.ps.column.data, PBF.ps.distance(row.Lat, row.Lng, obj.lat, obj.lng));
+      var hasProduct = product === 'All' || PBF.ps.hasProduct(row.Products, product);
+      var distance = hasProduct ? PBF.ps.distance(row.Lat, row.Lng, obj.lat, obj.lng) : PBF.ps.circumferenceEarth;
+      dataTable.setCell(r, PBF.ps.column.data, distance.toFixed(2));
     }
+
     dataTable.sort(PBF.ps.column.data);
   };
 
@@ -351,28 +340,46 @@ var PBF = PBF || {};
    * @param lon2
    * @returns {number}
    */
-  PBF.ps.distance = function(lat1, lon1, lat2, lon2) {
-    var radlat1 = Math.PI * lat1/180;
-    var radlat2 = Math.PI * lat2/180;
-    var radlon1 = Math.PI * lon1/180;
-    var radlon2 = Math.PI * lon2/180;
-    var theta = lon1-lon2;
-    var radtheta = Math.PI * theta/180;
+  PBF.ps.distance = function (lat1, lon1, lat2, lon2) {
+    var radlat1 = Math.PI * lat1 / 180;
+    var radlat2 = Math.PI * lat2 / 180;
+    var radlon1 = Math.PI * lon1 / 180;
+    var radlon2 = Math.PI * lon2 / 180;
+    var theta = lon1 - lon2;
+    var radtheta = Math.PI * theta / 180;
     var dist = Math.sin(radlat1) * Math.sin(radlat2) + Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta);
     dist = Math.acos(dist);
-    dist = dist * 180/Math.PI;
+    dist = dist * 180 / Math.PI;
     dist = dist * 60 * 1.1515;
     return dist * 1.609344;
   };
+
+  /**
+   * Check if product in product string
+   *
+   * @param productsString
+   * @param product
+   * @returns {boolean}
+   */
+  PBF.ps.hasProduct = function(productsString, product) {
+    var products = productsString.split(',');
+    var product = product.trim().toLowerCase();
+    for (var i = 0, l = products.length; i < l; i++) {
+      if (products[i].trim().toLowerCase() === product) {
+        return true;
+      }
+    }
+    return false;
+  };
+
 
   /**
    * Filter the data and map markers according to the
    * form state
    *
    * @param {string}  instigator
-   * @param {*}  data additional data if required
    */
-  PBF.ps.applyFilters = function (instigator, data) {
+  PBF.ps.applyFilters = function (instigator) {
     // only allow either state or search, never both
     if (instigator === 'state') {
       $('#search').val('');
@@ -384,15 +391,18 @@ var PBF = PBF || {};
     var state = $("#state").val();
     var search = $("#search").val();
 
+    /**
+     * Callback filter to check if product matches
+     *
+     * @param value
+     * @returns {boolean}
+     */
+    function checkProduct(value) {
+      return PBF.ps.hasProduct(value, product);
+    };
+
     // create filters
     var filters = [];
-
-    if (product !== 'All') {
-      filters.push({
-        column: PBF.ps.column.Products,
-        test: PBF.ps.checkProduct
-      });
-    }
 
     if (search !== '') {
       var parts = search.split(',');
@@ -408,15 +418,20 @@ var PBF = PBF || {};
          value: parts[0]
          });
          */
-        PBF.ps.sortTableByDistance(PBF.ps.dataTable, data);
+        PBF.ps.addDistance(PBF.ps.dataTable, PBF.ps.searchObject, product);
 
         filters.push({
           test: function (value, rowNum) {
-            return rowNum <= PBF.ps.numClosestVenues;
+            return rowNum < PBF.ps.numClosestVenues;
           },
           column: PBF.ps.column.Lat, // dummy values
           minValue: -100, // dummy values
           maxValue: 100, // dummy values
+        });
+
+        filters.push({
+          column: PBF.ps.column.data,
+          maxValue: PBF.ps.circumferenceEarth - 1
         });
       }
     } else if (state !== 'All') {
@@ -424,10 +439,16 @@ var PBF = PBF || {};
         column: PBF.ps.column.State,
         value: state
       });
+
+      if (product !== 'All') {
+        filters.push({
+          column: PBF.ps.column.Products,
+          test: checkProduct
+        });
+      }
     }
 
     if (filters.length > 0) {
-      // filter data table view
       PBF.ps.dataView.setRows(
         PBF.ps.dataTable.getFilteredRows(filters)
       );
@@ -442,7 +463,6 @@ var PBF = PBF || {};
       PBF.ps.showNoResults();
     }
   };
-
 
   // go ...
   google.load('visualization', '1', {packages: ['table']});
@@ -464,10 +484,11 @@ var PBF = PBF || {};
         minLength: 4,
         source: postcodes,
         select: function (event, ui) {
-          PBF.ps.applyFilters(this.id, ui.item.obj);
+          PBF.ps.searchObject = ui.item.obj;
+          PBF.ps.applyFilters(this.id);
           return false;
         },
-        focus: function( event, ui ) {
+        focus: function (event, ui) {
           $('#search').val(ui.item.label);
           return false;
         }
