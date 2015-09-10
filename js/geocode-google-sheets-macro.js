@@ -167,7 +167,9 @@ function orderProducts() {
     var row = getRow(sheet, i, columnEnd);
     var product = getRowColumn(row, column.products);
     var products = product.split(/\s*,\s*/);
-    products.sort();
+    products.sort(function (a, b) {
+      return a.toLowerCase().localeCompare(b.toLowerCase());
+    });
     sheet.getRange(i, column.products).setValue(products.join(', '));
   }
 }
