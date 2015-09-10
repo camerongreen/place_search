@@ -325,7 +325,7 @@ var PBF = PBF || {};
   PBF.ps.addDistance = function (dataTable, obj, product) {
     for (var r = 0, nr = dataTable.getNumberOfRows(); r < nr; r++) {
       var row = PBF.ps.getRow(dataTable, r);
-      var hasProduct = product === 'All' || PBF.ps.hasProduct(row.Products, product);
+      var hasProduct = PBF.ps.hasProduct(row.Products, product);
       var distance = hasProduct ? PBF.ps.distance(row.Lat, row.Lng, obj.lat, obj.lng) : PBF.ps.circumferenceEarth;
       dataTable.setCell(r, PBF.ps.column.data, distance.toFixed(2));
     }
@@ -364,6 +364,12 @@ var PBF = PBF || {};
    * @returns {boolean}
    */
   PBF.ps.hasProduct = function (productsString, product) {
+    if (product === 'All') {
+      return true;
+    }
+    if (productsString === null) {
+      return false;
+    }
     var products = productsString.split(',');
     var product = product.trim().toLowerCase();
     for (var i = 0, l = products.length; i < l; i++) {
