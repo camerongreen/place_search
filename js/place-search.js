@@ -324,14 +324,14 @@ PBF.ps.fitBounds = function () {
   PBF.ps.map.fitBounds(bounds);
 };
 
-PBF.ps.showNoResults = function() {
+PBF.ps.showNoResults = function () {
   $("#ps-dialog-message").prop('title', 'No results');
   $("#ps-dialog-message").text("Please change your selections and try again");
-  $( "#ps-dialog-message" ).dialog({
+  $("#ps-dialog-message").dialog({
     modal: true,
     buttons: {
-      Ok: function() {
-        $( this ).dialog( "close" );
+      Ok: function () {
+        $(this).dialog("close");
       }
     }
   });
@@ -344,6 +344,7 @@ PBF.ps.showNoResults = function() {
 PBF.ps.applyFilters = function () {
   var state = $("#state").val();
   var product = $("#product").val();
+  var search = $("#search").val();
 
   function checkProduct(value, row, col, dataView) {
     var values = value.split(',');
@@ -365,7 +366,20 @@ PBF.ps.applyFilters = function () {
     });
   }
 
-  if (state !== 'All') {
+  if (search !== '') {
+    var parts = search.split(',');
+    if (parts.length === 2) {
+      filters.push({
+        column: PBF.ps.column.Postcode,
+        value: parseInt(parts[1], 10)
+      });
+      filters.push({
+        column: PBF.ps.column.Suburb,
+        value: parts[0]
+      });
+    }
+
+  } else if (state !== 'All') {
     filters.push({
       column: PBF.ps.column.State,
       value: state
@@ -402,11 +416,32 @@ $(document).ready(function () {
     PBF.ps.dataView = new google.visualization.DataView(PBF.ps.dataTable);
     $('#state').val('All');
     $('#product').val('All');
+    $('#search').val('');
     PBF.ps.drawVisualisations();
   });
 
   $('#state, #product').change(function () {
     PBF.ps.applyFilters();
+  });
+
+  $.getJSON('js/postcodes.json', function (results) {
+    var postcodes = $.map(results, function (value) {
+      return {
+        label: value.sub + ', ' + value.pc,
+        value: value.sub + ', ' + value.pc
+      };
+    });
+    $('#search').autocomplete({
+      minLength: 4,
+      source: postcodes,
+      select: function (event, ui) {
+        PBF.ps.applyFilters();
+        return false;
+      }
+    });
+  }).fail(function (jqxhr, textStatus, error) {
+    var err = textStatus + ', ' + error;
+    console.log('Request Failed: ' + err);
   });
 });
 

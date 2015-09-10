@@ -21,7 +21,12 @@
     </div>
     <!-- /#map -->
     <form class="form-inline" role="form">
-      <span>Filter:</span>
+      <span>Filter by:</span>
+      <label for="product">Product</label>
+      <select name="product" id="product" class="form-control">
+        <option>All</option>
+      </select>
+      <label for="state">State</label>
       <select name="state" id="state" class="form-control">
         <option>All</option>
         <option value="NSW">New South Wales</option>
@@ -33,9 +38,8 @@
         <option value="ACT">Australian Capital Territory</option>
         <option value="NT">Northern Territory</option>
       </select>
-      <select name="product" id="product" class="form-control">
-        <option>All</option>
-      </select>
+      <label for="search">Suburb</label>
+      <input type="text" class="form-control" name="search" id="search" placeholder="Suburb or Postcode"/>
       <button type="button" id="reset-map" class="btn btn-success">Reset Map
       </button>
     </form>
