@@ -32,7 +32,7 @@ var PBF = PBF || {};
       lat: 2,
       lng: 135
     },
-    numClosestVenues: 3,
+    numClosestVenues: 5,
     circumferenceEarth: 40755,
     markers: [],
     infoWindows: [],
@@ -361,7 +361,7 @@ var PBF = PBF || {};
    * @param product
    * @returns {boolean}
    */
-  PBF.ps.hasProduct = function(productsString, product) {
+  PBF.ps.hasProduct = function (productsString, product) {
     var products = productsString.split(',');
     var product = product.trim().toLowerCase();
     for (var i = 0, l = products.length; i < l; i++) {
@@ -434,11 +434,13 @@ var PBF = PBF || {};
           maxValue: PBF.ps.circumferenceEarth - 1
         });
       }
-    } else if (state !== 'All') {
-      filters.push({
-        column: PBF.ps.column.State,
-        value: state
-      });
+    } else {
+      if (state !== 'All') {
+        filters.push({
+          column: PBF.ps.column.State,
+          value: state
+        });
+      }
 
       if (product !== 'All') {
         filters.push({
