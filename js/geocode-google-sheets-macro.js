@@ -16,6 +16,7 @@ var columnHeadings = {
   postcode: 'Postcode',
   geo: 'Geocoded address',
   geoResult: 'Geocode result',
+  date: 'Geocoding date',
   lat: 'Lat',
   lng: 'Lng'
 };
@@ -50,9 +51,9 @@ function getFirstSheet(sheet) {
 function makeAddress(addressColumns, values) {
   var returnVal = [];
   for (var i = 0, l = addressColumns.length; i < l; i++) {
-    var value = values[addressColumns[i]] + '';
+    var value = getRowColumn(values, addressColumns[i]) + '';
     if (value.trim() !== '') {
-      returnVal.push(values[addressColumns[i] - 1]);
+      returnVal.push(value);
     }
   }
   return returnVal.join(', ');
@@ -70,7 +71,7 @@ function getRow(sheet, row, columns) {
   var rowValues = row.getValues()[0];
   var returnVal = [];
   for (var i = 0, l = rowValues.length; i < l; i++) {
-    returnVal.push(rowValues[i] + '');
+    returnVal.push((rowValues[i] + '').trim());
   }
   return returnVal;
 }
@@ -89,6 +90,19 @@ function getColumnIndexes(headings, columnHeadings) {
     }
   }
   return returnVal;
+}
+
+/**
+ * Get row column
+ *
+ * Columns in spreadsheets start at 1, whereas in our array
+ * they start at zero, so make adjustment of - 1 to column index
+ *
+ * @param {mixed[]} row
+ * @param {mixed} value
+ */
+function getRowColumn(row, column) {
+  return row[column - 1];
 }
 
 /**
@@ -114,18 +128,23 @@ function geocodeAddresses() {
   // skip rows up to headings
   for (var i = headingRow + 1; i <= rowEnd; i++) {
     var row = getRow(sheet, i, columnEnd);
-    var address = makeAddress(addressColumns, row);
-    sheet.getRange(i, column.geo).setValue(address);
-    var location = geocoder.geocode(address);
-    sheet.getRange(i, column.geoResult).setValue(location.status);
 
-    // if we get OK then set the lat lng values
-    if (location.status === 'OK') {
-      var lat = location.results[0].geometry.location.lat;
-      var lng = location.results[0].geometry.location.lng;
+    // only geocode columns without coordinates
+    if (getRowColumn(row, column.lat) === '') {
+      var address = makeAddress(addressColumns, row);
+      sheet.getRange(i, column.geo).setValue(address);
+      var location = geocoder.geocode(address);
+      sheet.getRange(i, column.geoResult).setValue(location.status);
+      sheet.getRange(i, column.date).setValue((new Date()).toLocaleString());
 
-      sheet.getRange(i, column.lat).setValue(lat);
-      sheet.getRange(i, column.lng).setValue(lng);
+      // if we get OK then set the lat lng values
+      if (location.status === 'OK') {
+        var lat = location.results[0].geometry.location.lat;
+        var lng = location.results[0].geometry.location.lng;
+
+        sheet.getRange(i, column.lat).setValue(lat);
+        sheet.getRange(i, column.lng).setValue(lng);
+      }
     }
   }
 }
