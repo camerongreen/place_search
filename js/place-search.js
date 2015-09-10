@@ -9,6 +9,7 @@ var PBF = PBF || {};
 
 PBF.ps = {
   dataTable: null,
+  dataView: null,
   map: null,
   chart: null,
   spreadsheet: 'https://spreadsheets.google.com/tq?key=1z-Y4EWAlkFcKZNdAHIaXvyH3MtVvYT1JnusnVEAnLew',
@@ -29,14 +30,15 @@ PBF.ps = {
   },
   markers: [],
   infoWindows: [],
-  products: []
+  products: [],
+  column: {}
 };
 
 /**
  * Loads a google spreadsheet
  */
 PBF.ps.loadVisualisations = function () {
-  new google.visualization.Query(PBF.ps.spreadsheet).send(PBF.ps.drawVisualisations);
+  new google.visualization.Query(PBF.ps.spreadsheet).send(PBF.ps.initVisualisations);
 };
 
 /**
@@ -45,26 +47,45 @@ PBF.ps.loadVisualisations = function () {
  *
  * @param response
  */
-PBF.ps.drawVisualisations = function (response) {
+PBF.ps.initVisualisations = function (response) {
   PBF.ps.dataTable = response.getDataTable();
+  PBF.ps.dataView = new google.visualization.DataView(PBF.ps.dataTable);
 
   $('#ps-loader').hide();
+  $('#ps-content').show();
+  PBF.ps.populateColumnIndexes();
   PBF.ps.drawMap();
-  PBF.ps.drawDataTable(PBF.ps.dataTable);
-  PBF.ps.drawPlacemarks(PBF.ps.map, PBF.ps.dataTable);
-  PBF.ps.fitBounds();
+  PBF.ps.drawVisualisations();
   PBF.ps.populateProducts();
+};
+
+/**
+ * Draws the map and dataview from current state of global arrays
+ */
+PBF.ps.drawVisualisations = function() {
+  PBF.ps.drawDataView(PBF.ps.dataView);
+  PBF.ps.drawPlacemarks(PBF.ps.map, PBF.ps.dataView);
+  PBF.ps.fitBounds();
+};
+
+/**
+ * Populates the column indexes
+ */
+PBF.ps.populateColumnIndexes = function () {
+  for (var i = 0, l = PBF.ps.dataView.getNumberOfColumns(); i < l; i++) {
+    PBF.ps.column[PBF.ps.dataView.getColumnLabel(i)] = i;
+  }
 };
 
 /**
  * Draws markers on the map representing the passed in data
  *
  * @param {Object}  map
- * @param {Object}  dataTable
+ * @param {Object}  dataView
  */
-PBF.ps.drawPlacemarks = function (map, dataTable) {
-  for (var r = 0, nr = dataTable.getNumberOfRows(); r < nr; r++) {
-    var row = PBF.ps.getRow(dataTable, r);
+PBF.ps.drawPlacemarks = function (map, dataView) {
+  for (var r = 0, nr = dataView.getNumberOfRows(); r < nr; r++) {
+    var row = PBF.ps.getRow(dataView, r);
     PBF.ps.addPlacemark(map, row.Lat, row.Lng, row.Name, null, row);
     PBF.ps.addProducts(row.Products);
   }
@@ -88,26 +109,26 @@ PBF.ps.addProducts = function (productsStr) {
 };
 
 /**
- * Populates the products select
+ * Populates the product select
  */
 PBF.ps.populateProducts = function () {
   for (var i = 0, l = PBF.ps.products.length; i < l; i++) {
-    $('#products').append($('<option>', {text: PBF.ps.products[i]}));
+    $('#product').append($('<option>', {text: PBF.ps.products[i]}));
   }
 };
 
 /**
  * Gets a Row into an object for easier use
  *
- * @param {Object} dataTable
+ * @param {Object} dataView
  * @param {int} rowNum
  * @return  {Object}
  */
-PBF.ps.getRow = function (dataTable, rowNum) {
+PBF.ps.getRow = function (dataView, rowNum) {
   var returnVal = {};
-  for (var c = 0, nc = dataTable.getNumberOfColumns(); c < nc; c++) {
-    var columnName = dataTable.getColumnLabel(c);
-    var columnValue = dataTable.getValue(rowNum, c);
+  for (var c = 0, nc = dataView.getNumberOfColumns(); c < nc; c++) {
+    var columnName = dataView.getColumnLabel(c);
+    var columnValue = dataView.getValue(rowNum, c);
     if (['Lat', 'Lng'].indexOf(columnName) !== -1) {
       returnVal[columnName] = parseFloat(columnValue);
     } else {
@@ -190,9 +211,6 @@ PBF.ps.makeInfoWindow = function (title, image, display) {
 
 /**
  * Shows a google GeoChart visualisation to the '#map' html element
- *
- * Globals:
- *   PBF.ps.dataTable
  */
 PBF.ps.drawMap = function () {
   var styles = [
@@ -241,7 +259,7 @@ PBF.ps.drawMap = function () {
 PBF.ps.rowSelectFunction = function () {
   var select = PBF.ps.chart.getSelection();
   if (select.length > 0) {
-    var row = PBF.ps.getRow(PBF.ps.dataTable, select[0].row);
+    var row = PBF.ps.getRow(PBF.ps.dataView, select[0].row);
     var pos = new google.maps.LatLng(row.Lat, row.Lng);
     PBF.ps.map.setCenter(pos);
     PBF.ps.map.setZoom(PBF.ps.mapZoomed);
@@ -263,16 +281,16 @@ PBF.ps.closeAllWindows = function () {
 /**
  * Shows a google Table visualisation to the '#data-table' html element
  *
- * @param dataTable
+ * @param dataView
  */
-PBF.ps.drawDataTable = function (dataTable) {
+PBF.ps.drawDataView = function (dataView) {
   var options = {};
 
-  var displayDataView = new google.visualization.DataView(dataTable);
+  var displayDataView = new google.visualization.DataView(dataView);
 
   var hideColumnIndexes = [];
   for (var c = 0, l = displayDataView.getNumberOfColumns(); c < l; c++) {
-    var columnName = PBF.ps.dataTable.getColumnLabel(c);
+    var columnName = PBF.ps.dataView.getColumnLabel(c);
     if (PBF.ps.hideColumns.indexOf(columnName) !== -1) {
       hideColumnIndexes.push(c);
     }
@@ -285,6 +303,9 @@ PBF.ps.drawDataTable = function (dataTable) {
   google.visualization.events.addListener(PBF.ps.chart, 'select', PBF.ps.rowSelectFunction);
 };
 
+/**
+ * Fit the map to the active markers
+ */
 PBF.ps.fitBounds = function () {
   var bounds = new google.maps.LatLngBounds();
   for (i = 0; i < PBF.ps.markers.length; i++) {
@@ -292,6 +313,52 @@ PBF.ps.fitBounds = function () {
   }
 
   PBF.ps.map.fitBounds(bounds);
+};
+
+/**
+ * Filter the data and map markers according to the
+ * form state
+ */
+PBF.ps.applyFilters = function () {
+  var state = $("#state").val();
+  var product = $("#product").val();
+
+  function checkProduct(value, row, col, dataView) {
+    var values = value.split(',');
+    for (var i = 0, l = values.length; i < l; i++) {
+      if (values[i].trim().toLowerCase() === product.trim().toLowerCase()) {
+        return true;
+      }
+    }
+    return false;
+  };
+
+  // create filters
+  var filters = [];
+
+  if (product !== 'All') {
+    filters.push({
+      column: PBF.ps.column.Products,
+      test: checkProduct
+    });
+  }
+
+  if (state !== 'All') {
+    filters.push({
+      column: PBF.ps.column.State,
+      value: state
+    });
+  }
+  // filter data table view
+  PBF.ps.dataView.setRows(
+    PBF.ps.dataTable.getFilteredRows(filters)
+  );
+
+  // redraw map
+  PBF.ps.drawVisualisations();
+
+  // fit bounds
+  PBF.ps.fitBounds();
 };
 
 
@@ -302,8 +369,14 @@ google.maps.event.addDomListener(window, 'load', PBF.ps.loadVisualisations);
 /*
  * jQuery function to reset map
  */
-$('#reset-map').click(function () {
-  PBF.ps.fitBounds();
+$(document).ready(function () {
+  $('#reset-map').click(function () {
+    PBF.ps.fitBounds();
+  });
+
+  $('#state, #product').change(function () {
+    PBF.ps.applyFilters();
+  });
 });
 
 

@@ -12,6 +12,10 @@ div.container {
     width: 80%;
 }
 
+#ps-content {
+    display: none;
+}
+
 #ps-map {
     width: 100%;
     height: 500px;
