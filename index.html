@@ -19,6 +19,21 @@
   </div>
   <!-- /#map -->
   <form class="form-inline" role="form">
+    <span>Filter:</span>
+    <select name="state" id="state" class="form-control">
+      <option>All</option>
+      <option value="NSW">New South Wales</option>
+      <option value="VIC">Victoria</option>
+      <option value="QLD">Queensland</option>
+      <option value="SA">South Australia</option>
+      <option value="WA">Western Australia</option>
+      <option value="TAS">Tasmania</option>
+      <option value="ACT">Australian Capital Territory</option>
+      <option value="NT">Northern Territory</option>
+    </select>
+    <select name="products" id="products" class="form-control">
+      <option>All</option>
+    </select>
     <button type="button" id="reset-map" class="btn btn-success">Reset Map
     </button>
   </form>

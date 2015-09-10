@@ -28,7 +28,8 @@ PBF.ps = {
     lng: 135
   },
   markers: [],
-  infoWindows: []
+  infoWindows: [],
+  products: []
 };
 
 /**
@@ -52,6 +53,7 @@ PBF.ps.drawVisualisations = function (response) {
   PBF.ps.drawDataTable(PBF.ps.dataTable);
   PBF.ps.drawPlacemarks(PBF.ps.map, PBF.ps.dataTable);
   PBF.ps.fitBounds();
+  PBF.ps.populateProducts();
 };
 
 /**
@@ -64,11 +66,42 @@ PBF.ps.drawPlacemarks = function (map, dataTable) {
   for (var r = 0, nr = dataTable.getNumberOfRows(); r < nr; r++) {
     var row = PBF.ps.getRow(dataTable, r);
     PBF.ps.addPlacemark(map, row.Lat, row.Lng, row.Name, null, row);
+    PBF.ps.addProducts(row.Products);
   }
 };
 
 /**
- * gets a Row into an object for easier use
+ * Adds products to ordered global array
+ *
+ * @param {string} productsStr
+ */
+PBF.ps.addProducts = function (productsStr) {
+  var products = productsStr.split(',');
+
+  for (var i = 0, l = products.length; i < l; i++) {
+    if (PBF.ps.products.indexOf(products[i]) === -1) {
+      PBF.ps.products.push(products[i]);
+    }
+  }
+
+  PBF.ps.products.sort();
+};
+
+/**
+ * Populates the products select
+ */
+PBF.ps.populateProducts = function () {
+  for (var i = 0, l = PBF.ps.products.length; i < l; i++) {
+    $('#products').append($('<option>', {text: PBF.ps.products[i]}));
+  }
+};
+
+/**
+ * Gets a Row into an object for easier use
+ *
+ * @param {Object} dataTable
+ * @param {int} rowNum
+ * @return  {Object}
  */
 PBF.ps.getRow = function (dataTable, rowNum) {
   var returnVal = {};
