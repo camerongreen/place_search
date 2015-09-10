@@ -13,6 +13,7 @@ var columnHeadings = {
   street: 'Street',
   suburb: 'Suburb',
   state: 'State',
+  products: 'Products',
   postcode: 'Postcode',
   geo: 'Geocoded address',
   geoResult: 'Geocode result',
@@ -150,6 +151,28 @@ function geocodeAddresses() {
 }
 
 /**
+ * Main function, takes the comma seperated products
+ * array and orders it alphabetically
+ */
+function orderProducts() {
+  var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+  var sheet = getFirstSheet(spreadsheet);
+  var rowEnd = sheet.getLastRow();
+  var columnEnd = sheet.getLastColumn();
+  var headings = getRow(sheet, headingRow, columnEnd);
+  var column = getColumnIndexes(headings, columnHeadings);
+
+  // skip rows up to headings
+  for (var i = headingRow + 1; i <= rowEnd; i++) {
+    var row = getRow(sheet, i, columnEnd);
+    var product = getRowColumn(row, column.products);
+    var products = product.split(/\s*,\s*/);
+    products.sort();
+    sheet.getRange(i, column.products).setValue(products.join(', '));
+  }
+}
+
+/**
  * Adds a custom menu to the active spreadsheet, containing a single menu item.
  *
  * The onOpen() function, when defined, is automatically invoked whenever the
@@ -163,6 +186,9 @@ function onOpen() {
   var entries = [{
     name: "Geocode columns",
     functionName: "geocodeAddresses"
+  },{
+    name: "Order products",
+    functionName: "orderProducts"
   }];
   spreadsheet.addMenu("Macros", entries);
 }

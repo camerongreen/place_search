@@ -106,11 +106,11 @@ var PBF = PBF || {};
    * @param {string} productsStr
    */
   PBF.ps.addProducts = function (productsStr) {
-    var products = productsStr.split(',');
+    var products = productsStr.split(/\s*,\s*/);
 
     for (var i = 0, l = products.length; i < l; i++) {
-      if (PBF.ps.products.indexOf(products[i].trim()) === -1) {
-        PBF.ps.products.push(products[i].trim());
+      if (PBF.ps.products.indexOf(products[i]) === -1) {
+        PBF.ps.products.push(products[i]);
       }
     }
 
