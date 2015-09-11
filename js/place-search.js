@@ -93,9 +93,11 @@ var PBF = PBF || {};
   PBF.ps.drawPlacemarks = function (map, dataView) {
     for (var r = 0, nr = dataView.getNumberOfRows(); r < nr; r++) {
       var row = PBF.ps.getRow(dataView, r);
-      PBF.ps.addPlacemark(map, row.Lat, row.Lng, row.Name, null, row);
-      if (row.Brands !== null) {
-        PBF.ps.addBrands(row.Brands);
+      if (isNaN(row.Lat) === false) {
+        PBF.ps.addPlacemark(map, row.Lat, row.Lng, row.Name, null, row);
+        if (row.Brands !== null) {
+          PBF.ps.addBrands(row.Brands);
+        }
       }
     }
   };
@@ -495,6 +497,7 @@ var PBF = PBF || {};
           obj: value
         };
       });
+      results = [];
       $('#search').autocomplete({
         minLength: 4,
         source: postcodes,
