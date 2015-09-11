@@ -14,6 +14,7 @@ var PBF = PBF || {};
     map: null,
     chart: null,
     spreadsheet: 'https://spreadsheets.google.com/tq?key=1z-Y4EWAlkFcKZNdAHIaXvyH3MtVvYT1JnusnVEAnLew',
+    postcodesFile: 'js/postcodes.json',
     markerImage: 'images/mm_20_white.png',
     mapZoom: 3,
     mapZoomed: 15,
@@ -493,7 +494,7 @@ var PBF = PBF || {};
    */
   $(document).ready(function () {
     // set up the autocomplete
-    $.getJSON('js/postcodes.json', function (results) {
+    $.getJSON(PBF.ps.postcodesFile, function (results) {
       var postcodes = $.map(results, function (value) {
         return {
           label: value.sub + ', ' + value.pc,
