@@ -36,7 +36,7 @@ var PBF = PBF || {};
     circumferenceEarth: 40755,
     markers: [],
     infoWindows: [],
-    products: [],
+    brands: [],
     searchObject: [],
     column: {}
   };
@@ -62,7 +62,7 @@ var PBF = PBF || {};
     PBF.ps.populateColumnIndexes();
     PBF.ps.drawMap();
     PBF.ps.drawVisualisations();
-    PBF.ps.populateProducts();
+    PBF.ps.populateBrands();
     $('#ps-loader').hide();
     $('#ps-content').show();
   };
@@ -96,35 +96,35 @@ var PBF = PBF || {};
     for (var r = 0, nr = dataView.getNumberOfRows(); r < nr; r++) {
       var row = PBF.ps.getRow(dataView, r);
       PBF.ps.addPlacemark(map, row.Lat, row.Lng, row.Name, null, row);
-      if (row.Products !== null) {
-        PBF.ps.addProducts(row.Products);
+      if (row.Brands !== null) {
+        PBF.ps.addBrands(row.Brands);
       }
     }
   };
 
   /**
-   * Adds products to ordered global array
+   * Adds brands to ordered global array
    *
-   * @param {string} productsStr
+   * @param {string} brandsStr
    */
-  PBF.ps.addProducts = function (productsStr) {
-    var products = productsStr.split(/\s*,\s*/);
+  PBF.ps.addBrands = function (brandsStr) {
+    var brands = brandsStr.split(/\s*,\s*/);
 
-    for (var i = 0, l = products.length; i < l; i++) {
-      if (PBF.ps.products.indexOf(products[i]) === -1) {
-        PBF.ps.products.push(products[i]);
+    for (var i = 0, l = brands.length; i < l; i++) {
+      if (PBF.ps.brands.indexOf(brands[i]) === -1) {
+        PBF.ps.brands.push(brands[i]);
       }
     }
 
-    PBF.ps.products.sort();
+    PBF.ps.brands.sort();
   };
 
   /**
-   * Populates the product select
+   * Populates the brand select
    */
-  PBF.ps.populateProducts = function () {
-    for (var i = 0, l = PBF.ps.products.length; i < l; i++) {
-      $('#product').append($('<option>', {text: PBF.ps.products[i]}));
+  PBF.ps.populateBrands = function () {
+    for (var i = 0, l = PBF.ps.brands.length; i < l; i++) {
+      $('#brand').append($('<option>', {text: PBF.ps.brands[i]}));
     }
   };
 
@@ -319,14 +319,14 @@ var PBF = PBF || {};
    *
    * @param {Object} dataTable
    * @param {Object} obj
-   * @param {string} product
+   * @param {string} brand
    * @returns {int}
    */
-  PBF.ps.addDistance = function (dataTable, obj, product) {
+  PBF.ps.addDistance = function (dataTable, obj, brand) {
     for (var r = 0, nr = dataTable.getNumberOfRows(); r < nr; r++) {
       var row = PBF.ps.getRow(dataTable, r);
-      var hasProduct = PBF.ps.hasProduct(row.Products, product);
-      var distance = hasProduct ? PBF.ps.distance(row.Lat, row.Lng, obj.lat, obj.lng) : PBF.ps.circumferenceEarth;
+      var hasBrand = PBF.ps.hasBrand(row.Brands, brand);
+      var distance = hasBrand ? PBF.ps.distance(row.Lat, row.Lng, obj.lat, obj.lng) : PBF.ps.circumferenceEarth;
       dataTable.setCell(r, PBF.ps.column.data, distance.toFixed(2));
     }
 
@@ -357,23 +357,23 @@ var PBF = PBF || {};
   };
 
   /**
-   * Check if product in product string
+   * Check if brand in brand string
    *
-   * @param productsString
-   * @param product
+   * @param brandsString
+   * @param brand
    * @returns {boolean}
    */
-  PBF.ps.hasProduct = function (productsString, product) {
-    if (product === 'All') {
+  PBF.ps.hasBrand = function (brandsString, brand) {
+    if (brand === 'All') {
       return true;
     }
-    if (productsString === null) {
+    if (brandsString === null) {
       return false;
     }
-    var products = productsString.split(',');
-    var product = product.trim().toLowerCase();
-    for (var i = 0, l = products.length; i < l; i++) {
-      if (products[i].trim().toLowerCase() === product) {
+    var brands = brandsString.split(',');
+    var brand = brand.trim().toLowerCase();
+    for (var i = 0, l = brands.length; i < l; i++) {
+      if (brands[i].trim().toLowerCase() === brand) {
         return true;
       }
     }
@@ -395,18 +395,18 @@ var PBF = PBF || {};
       $('#state').val('All');
     }
 
-    var product = $("#product").val();
+    var brand = $("#brand").val();
     var state = $("#state").val();
     var search = $("#search").val();
 
     /**
-     * Callback filter to check if product matches
+     * Callback filter to check if brand matches
      *
      * @param value
      * @returns {boolean}
      */
-    function checkProduct(value) {
-      return PBF.ps.hasProduct(value, product);
+    function checkBrand(value) {
+      return PBF.ps.hasBrand(value, brand);
     };
 
     // create filters
@@ -426,7 +426,7 @@ var PBF = PBF || {};
          value: parts[0]
          });
          */
-        PBF.ps.addDistance(PBF.ps.dataTable, PBF.ps.searchObject, product);
+        PBF.ps.addDistance(PBF.ps.dataTable, PBF.ps.searchObject, brand);
 
         filters.push({
           test: function (value, rowNum) {
@@ -450,10 +450,10 @@ var PBF = PBF || {};
         });
       }
 
-      if (product !== 'All') {
+      if (brand !== 'All') {
         filters.push({
-          column: PBF.ps.column.Products,
-          test: checkProduct
+          column: PBF.ps.column.Brands,
+          test: checkBrand
         });
       }
     }
@@ -511,12 +511,12 @@ var PBF = PBF || {};
     $('#reset-map').click(function () {
       PBF.ps.dataView = new google.visualization.DataView(PBF.ps.dataTable);
       $('#state').val('All');
-      $('#product').val('All');
+      $('#brand').val('All');
       $('#search').val('');
       PBF.ps.drawVisualisations();
     });
 
-    $('#state, #product').change(function () {
+    $('#state, #brand').change(function () {
       PBF.ps.applyFilters(this.id);
     });
 

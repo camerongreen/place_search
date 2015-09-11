@@ -13,7 +13,7 @@ var columnHeadings = {
   street: 'Street',
   suburb: 'Suburb',
   state: 'State',
-  products: 'Products',
+  brands: 'Brands',
   postcode: 'Postcode',
   geo: 'Geocoded address',
   geoResult: 'Geocode result',
@@ -151,10 +151,10 @@ function geocodeAddresses() {
 }
 
 /**
- * Main function, takes the comma seperated products
+ * Main function, takes the comma seperated brands
  * array and orders it alphabetically
  */
-function orderProducts() {
+function orderBrands() {
   var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
   var sheet = getFirstSheet(spreadsheet);
   var rowEnd = sheet.getLastRow();
@@ -165,12 +165,12 @@ function orderProducts() {
   // skip rows up to headings
   for (var i = headingRow + 1; i <= rowEnd; i++) {
     var row = getRow(sheet, i, columnEnd);
-    var product = getRowColumn(row, column.products);
-    var products = product.split(/\s*,\s*/);
-    products.sort(function (a, b) {
+    var brand = getRowColumn(row, column.brands);
+    var brands = brand.split(/\s*,\s*/);
+    brands.sort(function (a, b) {
       return a.toLowerCase().localeCompare(b.toLowerCase());
     });
-    sheet.getRange(i, column.products).setValue(products.join(', '));
+    sheet.getRange(i, column.brands).setValue(brands.join(', '));
   }
 }
 
@@ -189,8 +189,8 @@ function onOpen() {
     name: "Geocode columns",
     functionName: "geocodeAddresses"
   },{
-    name: "Order products",
-    functionName: "orderProducts"
+    name: "Order brands",
+    functionName: "orderBrands"
   }];
   spreadsheet.addMenu("Macros", entries);
 }
