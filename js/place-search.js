@@ -189,7 +189,10 @@ var PBF = PBF || {};
    * Removes any existing elements from the map
    */
   PBF.ps.removeMapElements = function () {
-    PBF.ps.markers = [];
+    for (i = 0; i < PBF.ps.markers.length; i++) {
+      PBF.ps.markers[i].setMap(null);
+    }
+    PBF.ps.markers.length = 0;
     PBF.ps.closeAllWindows();
     PBF.ps.infoWindows = [];
   };
