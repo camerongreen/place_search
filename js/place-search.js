@@ -1,5 +1,5 @@
 /**
- * Visualisation to display PEF statistics globally
+ * Display places from a spreadsheet onto a google map
  *
  * @author  Cameron Green <i@camerongreen.org>
  * @date  2015-09-10
@@ -304,6 +304,9 @@ var PBF = PBF || {};
     PBF.ps.map.fitBounds(bounds);
   };
 
+  /**
+   * Show a dialog if there are no results
+   */
   PBF.ps.showNoResults = function () {
     $("#ps-dialog-message").prop('title', 'No results');
     $("#ps-dialog-message").text("Please change your selections and try again");
@@ -482,9 +485,10 @@ var PBF = PBF || {};
   google.maps.event.addDomListener(window, 'load', PBF.ps.loadVisualisations);
 
   /*
-   * jQuery function to reset map
+   * jQuery load function to set up listeners etc
    */
   $(document).ready(function () {
+    // set up the autocomplete
     $.getJSON('js/postcodes.json', function (results) {
       var postcodes = $.map(results, function (value) {
         return {
