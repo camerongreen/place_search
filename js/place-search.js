@@ -17,6 +17,10 @@ var PBF = PBF || {};
     markerImage: 'images/mm_20_white.png',
     mapZoom: 3,
     mapZoomed: 15,
+    brandsStrIgnore: [ // should all be in lower case
+      'tbc',
+      'please call'
+    ],
     hideColumns: [
       'Lat',
       'Lat',
@@ -95,9 +99,7 @@ var PBF = PBF || {};
       var row = PBF.ps.getRow(dataView, r);
       if (isNaN(row.Lat) === false) {
         PBF.ps.addPlacemark(map, row.Lat, row.Lng, row.Name, null, row);
-        if (row.Brands !== null) {
-          PBF.ps.addBrands(row.Brands);
-        }
+        PBF.ps.addBrands(row.Brands);
       }
     }
   };
@@ -108,11 +110,13 @@ var PBF = PBF || {};
    * @param {string} brandsStr
    */
   PBF.ps.addBrands = function (brandsStr) {
-    var brands = brandsStr.split(/\s*,\s*/);
+    if ((brandsStr != null) && (PBF.ps.brandsStrIgnore.indexOf(brandsStr.toLowerCase()) === -1)) {
+      var brands = brandsStr.split(/\s*,\s*/);
 
-    for (var i = 0, l = brands.length; i < l; i++) {
-      if (PBF.ps.brands.indexOf(brands[i]) === -1) {
-        PBF.ps.brands.push(brands[i]);
+      for (var i = 0, l = brands.length; i < l; i++) {
+        if (PBF.ps.brands.indexOf(brands[i]) === -1) {
+          PBF.ps.brands.push(brands[i]);
+        }
       }
     }
 
