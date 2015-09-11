@@ -17,8 +17,6 @@ var PBF = PBF || {};
     markerImage: 'images/mm_20_white.png',
     mapZoom: 3,
     mapZoomed: 15,
-    lineColour: '#FFFFFF',
-    lineOpacity: .5,
     hideColumns: [
       'Lat',
       'Lat',
