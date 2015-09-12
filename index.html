@@ -5,6 +5,8 @@
   <link rel="stylesheet"
         href="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.css"/>
   <link rel="stylesheet" type="text/css" href="css/place-search.css"/>
+  <link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css"
+        rel="stylesheet">
 </head>
 <body>
 <div>
@@ -28,11 +30,11 @@
 
           <form role="form">
             <div>
-              <input type="text" class="form-control" name="search" id="search"
+              <input type="text" name="search" id="search"
                      placeholder="Enter suburb or postcode"/>
             </div>
             <div>
-              <select name="state" id="state" class="form-control">
+              <select name="state" id="state">
                 <option value="All">Show by state</option>
                 <option value="NSW">New South Wales</option>
                 <option value="VIC">Victoria</option>
@@ -45,14 +47,12 @@
               </select>
             </div>
             <div>
-              <select name="brand" id="brand" class="form-control">
+              <select name="brand" id="brand">
                 <option value="All">Filter by brand</option>
               </select>
             </div>
             <div>
-              <button type="button" id="reset-map"
-                      class="btn btn-success pull-right">Reset options
-              </button>
+              <button type="button" id="reset-map">Reset options</button>
             </div>
           </form>
         </div>

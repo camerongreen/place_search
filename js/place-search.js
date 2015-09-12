@@ -65,7 +65,7 @@ var PBF = PBF || {};
 
     PBF.ps.populateColumnIndexes();
     PBF.ps.drawMap();
-    PBF.ps.drawVisualisations();
+    PBF.ps.drawVisualisations(PBF.ps.dataView);
     PBF.ps.populateBrands();
     $('#ps-loader').hide();
     $('#ps-content').show();
@@ -73,11 +73,13 @@ var PBF = PBF || {};
 
   /**
    * Draws the map and dataview from current state of global arrays
+   *
+   * @param {Object}  dataView
    */
-  PBF.ps.drawVisualisations = function () {
-    PBF.ps.drawDataView(PBF.ps.dataView);
+  PBF.ps.drawVisualisations = function (dataView) {
+    PBF.ps.drawDataView(dataView);
     PBF.ps.removeMapElements();
-    PBF.ps.drawPlacemarks(PBF.ps.map, PBF.ps.dataView);
+    PBF.ps.drawPlacemarks(PBF.ps.map, dataView);
     PBF.ps.fitBounds();
   };
 
@@ -217,15 +219,17 @@ var PBF = PBF || {};
       content += '<div class="col-sm-4"><img src="' + image + '" alt="' + title + ' Photo" class="img-responsive img-thumbnail"/></div><div class="col-sm-8">';
     }
 
-    content += '<h4>' + title + '</h4>' + '<table class="table" role="table">';
-
-    for (var key in display) {
-      if (display.hasOwnProperty(key) && (key !== 'Name') && (PBF.ps.hideColumns.indexOf(key) === -1) && (display[key] !== null)) {
-        content += '<tr><td><i class="glyphicon glyphicon-star-empty"></i></span> ' + key + '</td><td>' + display[key] + '</td></tr>';
-      }
+    content += '<h4>' + title + '</h4>';
+    content += '<div class="iw-address">' + [display.Street, display.Suburb, display.State, display.Postcode].join(', ') + '</div>';
+    content += '<div class="iw-phone">' + display.Phone + '</div>';
+    if (display.Website !== null) {
+      content += '<div class="iw-url"><a href="' + display.Website + '" target="_blank">' + display.Website + '</a></div>';
+    }
+    if (display.Facebook !== null) {
+      content += '<div class="iw-url"><a href="' + display.Facebook + '" target="_blank"><span class="icon icon-facebook" aria-hidden="true">Facebook</span></a></div>';
     }
 
-    content += '</table></div>';
+    content += '</div>';
 
     if (image !== null) {
       content += '</div>';
@@ -279,7 +283,9 @@ var PBF = PBF || {};
    * @param dataView
    */
   PBF.ps.drawDataView = function (dataView) {
-    var options = {};
+    var options = {
+      allowHtml: true
+    };
 
     var displayDataView = new google.visualization.DataView(dataView);
 
@@ -480,7 +486,7 @@ var PBF = PBF || {};
 
     if (PBF.ps.dataView.getNumberOfRows() > 0) {
       // redraw map
-      PBF.ps.drawVisualisations();
+      PBF.ps.drawVisualisations(PBF.ps.dataView);
     } else {
       PBF.ps.showNoResults();
     }
@@ -527,7 +533,7 @@ var PBF = PBF || {};
       $('#state').val('All');
       $('#brand').val('All');
       $('#search').val('');
-      PBF.ps.drawVisualisations();
+      PBF.ps.drawVisualisations(PBF.ps.dataView);
     });
 
     $('#state, #brand').change(function () {
