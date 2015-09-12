@@ -10,7 +10,6 @@ var PBF = PBF || {};
 (function ($) {
   PBF.ps = {
     dataTable: null,
-    dataView: null,
     map: null,
     chart: null,
     spreadsheet: 'https://spreadsheets.google.com/tq?key=1z-Y4EWAlkFcKZNdAHIaXvyH3MtVvYT1JnusnVEAnLew',
@@ -61,11 +60,10 @@ var PBF = PBF || {};
   PBF.ps.initVisualisations = function (response) {
     PBF.ps.dataTable = response.getDataTable();
     PBF.ps.column.data = PBF.ps.dataTable.addColumn('number', 'Km');
-    PBF.ps.dataView = new google.visualization.DataView(PBF.ps.dataTable);
 
-    PBF.ps.populateColumnIndexes();
+    PBF.ps.populateColumnIndexes(PBF.ps.dataTable);
     PBF.ps.drawMap();
-    PBF.ps.drawVisualisations(PBF.ps.dataView);
+    PBF.ps.drawVisualisations(PBF.ps.dataTable);
     PBF.ps.populateBrands();
     $('#ps-loader').hide();
     $('#ps-content').show();
@@ -74,21 +72,25 @@ var PBF = PBF || {};
   /**
    * Draws the map and dataview from current state of global arrays
    *
-   * @param {Object}  dataView
+   * @param {Object}  dataTable
+   * @param {integer[]} rows
    */
-  PBF.ps.drawVisualisations = function (dataView) {
-    PBF.ps.drawDataView(dataView);
+  PBF.ps.drawVisualisations = function (dataTable, rows) {
+    var dataView = PBF.ps.getDataView(dataTable, rows);
     PBF.ps.removeMapElements();
     PBF.ps.drawPlacemarks(PBF.ps.map, dataView);
     PBF.ps.fitBounds();
+    PBF.ps.drawDataView(dataView);
   };
 
   /**
    * Populates the column indexes
+   *
+   * @param {Object}  dataTable
    */
-  PBF.ps.populateColumnIndexes = function () {
-    for (var i = 0, l = PBF.ps.dataView.getNumberOfColumns(); i < l; i++) {
-      PBF.ps.column[PBF.ps.dataView.getColumnLabel(i)] = i;
+  PBF.ps.populateColumnIndexes = function (dataTable) {
+    for (var i = 0, l = dataTable.getNumberOfColumns(); i < l; i++) {
+      PBF.ps.column[dataTable.getColumnLabel(i)] = i;
     }
   };
 
@@ -226,7 +228,7 @@ var PBF = PBF || {};
       content += '<div class="iw-url"><a href="' + display.Website + '" target="_blank">' + display.Website + '</a></div>';
     }
     if (display.Facebook !== null) {
-      content += '<div class="iw-url"><a href="' + display.Facebook + '" target="_blank"><span class="icon icon-facebook" aria-hidden="true">Facebook</span></a></div>';
+      content += '<div class="iw-url"><a href="' + display.Facebook + '" target="_blank"><span class="icon icon-facebook" aria-hidden="true"></span></a></div>';
     }
 
     content += '</div>';
@@ -260,7 +262,7 @@ var PBF = PBF || {};
   PBF.ps.rowSelectFunction = function () {
     var select = PBF.ps.chart.getSelection();
     if (select.length > 0) {
-      var row = PBF.ps.getRow(PBF.ps.dataView, select[0].row);
+      var row = PBF.ps.getRow(PBF.ps.dataTable, select[0].row);
       var pos = new google.maps.LatLng(row.Lat, row.Lng);
       PBF.ps.map.setCenter(pos);
       PBF.ps.map.setZoom(PBF.ps.mapZoomed);
@@ -278,29 +280,44 @@ var PBF = PBF || {};
   };
 
   /**
+   * Converts table into dataView for display
+   *
+   * @param {Object} dataTable
+   * @param {integer[]} rows
+   */
+  PBF.ps.getDataView = function (dataTable, rows) {
+    var dataView = new google.visualization.DataView(dataTable);
+
+    if (rows) {
+      dataView.setRows(rows);
+    }
+
+
+    return dataView;
+  };
+
+  /**
    * Shows a google Table visualisation to the '#data-table' html element
    *
    * @param dataView
    */
   PBF.ps.drawDataView = function (dataView) {
     var options = {
-      allowHtml: true
+      allowHtml: true,
+      frozenColumns: 1
     };
 
-    var displayDataView = new google.visualization.DataView(dataView);
-
     var hideColumnIndexes = [];
-    for (var c = 0, l = displayDataView.getNumberOfColumns(); c < l; c++) {
-      var columnName = PBF.ps.dataView.getColumnLabel(c);
+    for (var c = 0, l = dataView.getNumberOfColumns(); c < l; c++) {
+      var columnName = dataView.getColumnLabel(c);
       if (PBF.ps.hideColumns.indexOf(columnName) !== -1) {
         hideColumnIndexes.push(c);
       }
     }
-
-    displayDataView.hideColumns(hideColumnIndexes);
+    dataView.hideColumns(hideColumnIndexes);
 
     PBF.ps.chart = new google.visualization.Table(document.getElementById('ps-data-table'));
-    PBF.ps.chart.draw(displayDataView, options);
+    PBF.ps.chart.draw(dataView, options);
     google.visualization.events.addListener(PBF.ps.chart, 'select', PBF.ps.rowSelectFunction);
   };
 
@@ -476,17 +493,15 @@ var PBF = PBF || {};
       }
     }
 
+    var rows = [];
+
     if (filters.length > 0) {
-      PBF.ps.dataView.setRows(
-        PBF.ps.dataTable.getFilteredRows(filters)
-      );
-    } else {
-      PBF.ps.dataView = new google.visualization.DataView(PBF.ps.dataTable);
+      rows = PBF.ps.dataTable.getFilteredRows(filters)
     }
 
-    if (PBF.ps.dataView.getNumberOfRows() > 0) {
+    if (rows.length > 0) {
       // redraw map
-      PBF.ps.drawVisualisations(PBF.ps.dataView);
+      PBF.ps.drawVisualisations(PBF.ps.dataTable, rows);
     } else {
       PBF.ps.showNoResults();
     }
@@ -529,11 +544,10 @@ var PBF = PBF || {};
     });
 
     $('#reset-map').click(function () {
-      PBF.ps.dataView = new google.visualization.DataView(PBF.ps.dataTable);
       $('#state').val('All');
       $('#brand').val('All');
       $('#search').val('');
-      PBF.ps.drawVisualisations(PBF.ps.dataView);
+      PBF.ps.drawVisualisations(PBF.ps.dataTable);
     });
 
     $('#state, #brand').change(function () {

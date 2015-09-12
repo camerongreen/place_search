@@ -73,11 +73,15 @@ form select {
   max-width: 150px;
 }
 /* line 68, ../sass/place-search.scss */
+.ps-info-window-content a {
+  text-decoration: none;
+}
+/* line 72, ../sass/place-search.scss */
 .ps-info-window-content td span {
   color: #BBB;
 }
 
-/* line 73, ../sass/place-search.scss */
+/* line 77, ../sass/place-search.scss */
 ul.map-heading li a {
   margin-bottom: 14px;
 }
