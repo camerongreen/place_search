@@ -20,6 +20,9 @@ table.google-visualization-table-table {
       color: #555;
     }
   }
+  tr td:nth-child(3) {
+    white-space: nowrap;
+  }
 }
 
 div.map-elements {

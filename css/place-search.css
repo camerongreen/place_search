@@ -23,54 +23,58 @@ table.google-visualization-table-table thead tr {
   background: none;
   color: #555;
 }
+/* line 23, ../sass/place-search.scss */
+table.google-visualization-table-table tr td:nth-child(3) {
+  white-space: nowrap;
+}
 
-/* line 26, ../sass/place-search.scss */
+/* line 29, ../sass/place-search.scss */
 div.map-elements div.our-stockists-form {
   border: 1px solid #e5e5e5;
   padding: 1em;
   margin-left: 1em;
 }
-/* line 31, ../sass/place-search.scss */
+/* line 34, ../sass/place-search.scss */
 div.map-elements div.map-container {
   margin-right: 1em;
 }
 
-/* line 36, ../sass/place-search.scss */
+/* line 39, ../sass/place-search.scss */
 #ps-content {
   display: none;
 }
 
-/* line 40, ../sass/place-search.scss */
+/* line 43, ../sass/place-search.scss */
 #ps-dialog-message {
   display: none;
 }
 
-/* line 44, ../sass/place-search.scss */
+/* line 47, ../sass/place-search.scss */
 #ps-map {
   height: 350px;
 }
 
-/* line 48, ../sass/place-search.scss */
+/* line 51, ../sass/place-search.scss */
 #ps-data-table {
   margin: 1em;
 }
-/* line 51, ../sass/place-search.scss */
+/* line 54, ../sass/place-search.scss */
 #ps-data-table > div {
   margin-top: 2em;
   width: 100%;
 }
-/* line 56, ../sass/place-search.scss */
+/* line 59, ../sass/place-search.scss */
 #ps-data-table table {
   width: 100%;
 }
 
-/* line 61, ../sass/place-search.scss */
+/* line 64, ../sass/place-search.scss */
 form button,
 form select {
   margin-right: 1ex;
 }
 
-/* line 66, ../sass/place-search.scss */
+/* line 69, ../sass/place-search.scss */
 #ps-loader {
   height: 100px;
   width: 100px;
@@ -78,20 +82,20 @@ form select {
   margin-top: 100px;
 }
 
-/* line 74, ../sass/place-search.scss */
+/* line 77, ../sass/place-search.scss */
 .ps-info-window-content img {
   max-width: 150px;
 }
-/* line 78, ../sass/place-search.scss */
+/* line 81, ../sass/place-search.scss */
 .ps-info-window-content a {
   text-decoration: none;
 }
-/* line 82, ../sass/place-search.scss */
+/* line 85, ../sass/place-search.scss */
 .ps-info-window-content td span {
   color: #BBB;
 }
 
-/* line 87, ../sass/place-search.scss */
+/* line 90, ../sass/place-search.scss */
 ul.map-heading li a {
   margin-bottom: 14px;
 }
