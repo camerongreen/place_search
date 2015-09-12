@@ -1,0 +1,75 @@
+/* csswizard documentation is lame, just had to get that off my chest */
+
+.grid {
+  font-size: 0;
+}
+
+.grid > .grid__item {
+  font-size: 16px;
+}
+
+body {
+  margin: 0;
+}
+
+div.map-elements {
+  div.our-stockists-form {
+    border: 1px solid #e5e5e5;
+    padding: 1em;
+    margin-left: 1em;
+  }
+  div.map-container {
+    margin-right: 1em;
+  }
+}
+
+#ps-content {
+  display: none;
+}
+
+#ps-dialog-message {
+  display: none;
+}
+
+#ps-map {
+  height: 350px;
+}
+
+#ps-data-table {
+  margin: 1em;
+
+  & > div {
+    margin-top: 2em;
+    width: 100%;
+  }
+
+  table {
+    width: 100%;
+  }
+}
+
+form button,
+form select {
+  margin-right: 1ex;
+}
+
+#ps-loader {
+  height: 100px;
+  width: 100px;
+  margin: auto;
+  margin-top: 100px;
+}
+
+.ps-info-window-content {
+  img {
+    max-width: 150px;
+  }
+
+  td span {
+    color: #BBB;
+  }
+}
+
+ul.map-heading li a {
+  margin-bottom: 14px;
+}

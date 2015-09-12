@@ -20,7 +20,8 @@ var PBF = PBF || {};
     mapZoomed: 15,
     brandsStrIgnore: [ // should all be in lower case
       'tbc',
-      'please call'
+      'please call',
+      'please contact store'
     ],
     hideColumns: [
       'Lat',

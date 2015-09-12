@@ -1,58 +1,75 @@
 <!DOCTYPE html>
 <head>
   <title>Place Search</title>
-  <link rel="stylesheet" type="text/css" href="css/styles.css"/>
+  <link rel="stylesheet" href="css/csswizardry-grids.css"/>
   <link rel="stylesheet"
         href="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.css"/>
+  <link rel="stylesheet" type="text/css" href="css/place-search.css"/>
 </head>
 <body>
-<div class="container-fluid">
-  <div class="row">
-    <div class="width col-xs-12 col-md-10 col-md-offset-1">
-      <h1>Place Search</h1>
+<div>
+  <h1>Place Search</h1>
 
-      <div id="ps-loader">
-        <img
-          src="//cdnjs.cloudflare.com/ajax/libs/semantic-ui/0.19.3/images/loader-large.gif"
-          alt="Loading"/>
+  <div id="ps-loader">
+    <img
+      src="//cdnjs.cloudflare.com/ajax/libs/semantic-ui/0.19.3/images/loader-large.gif"
+      alt="Loading"/>
+  </div>
+  <div id="ps-content">
+    <div class="map-elements grid">
+      <div class="grid__item one-third">
+        <div class="our-stockists-form">
+          <h1>Our Stockists</h1>
+
+          <p>You can find our products at retailers, restaurants and cafes all
+            over Australia.</p>
+
+          <p>Find a stockist near you.</p>
+
+          <form role="form">
+            <div>
+              <input type="text" class="form-control" name="search" id="search"
+                     placeholder="Enter suburb or postcode"/>
+            </div>
+            <div>
+              <select name="state" id="state" class="form-control">
+                <option value="All">Show by state</option>
+                <option value="NSW">New South Wales</option>
+                <option value="VIC">Victoria</option>
+                <option value="QLD">Queensland</option>
+                <option value="SA">South Australia</option>
+                <option value="WA">Western Australia</option>
+                <option value="TAS">Tasmania</option>
+                <option value="ACT">Australian Capital Territory</option>
+                <option value="NT">Northern Territory</option>
+              </select>
+            </div>
+            <div>
+              <select name="brand" id="brand" class="form-control">
+                <option value="All">Filter by brand</option>
+              </select>
+            </div>
+            <div>
+              <button type="button" id="reset-map"
+                      class="btn btn-success pull-right">Reset options
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
-      <div id="ps-content">
-        <div id="ps-map">
+      <div class="grid__item two-thirds">
+        <div class="map-container">
+          <div id="ps-map">
+          </div>
         </div>
-        <!-- /#map -->
-        <form class="form-inline" role="form">
-          <span>Filter by:</span>
-          <label for="brand">Brand</label>
-          <select name="brand" id="brand" class="form-control">
-            <option>All</option>
-          </select>
-          <label for="state">State</label>
-          <select name="state" id="state" class="form-control">
-            <option>All</option>
-            <option value="NSW">New South Wales</option>
-            <option value="VIC">Victoria</option>
-            <option value="QLD">Queensland</option>
-            <option value="SA">South Australia</option>
-            <option value="WA">Western Australia</option>
-            <option value="TAS">Tasmania</option>
-            <option value="ACT">Australian Capital Territory</option>
-            <option value="NT">Northern Territory</option>
-          </select>
-          <label for="search">Suburb</label>
-          <input type="text" class="form-control" name="search" id="search"
-                 placeholder="Suburb or Postcode"/>
-          <button type="button" id="reset-map"
-                  class="btn btn-success pull-right">Reset Map
-          </button>
-        </form>
-        <div id="ps-data-table">
-        </div>
-        <!-- /#data-table -->
       </div>
     </div>
-    <!-- /.width-->
+    <!-- /.map-elements-->
   </div>
-  <!-- /.row-->
+  <!-- /#ps-content -->
+  <div id="ps-data-table">
+  </div>
+  <!-- /#data-table -->
 </div>
 <!-- /.container-->
 <div id="ps-dialog-message">
