@@ -45,6 +45,27 @@ var PBF = PBF || {};
   };
 
   /**
+   * Custom datatable formatter
+   */
+  var WebsiteFormatter = function (type) {
+    this.type = type;
+  }
+  /**
+   * Formats a gviz DataTable column
+   * @param {Object} dt DataTable to format
+   * @param {Number} column index number
+   */
+  WebsiteFormatter.prototype.format = function (dt, column) {
+    for (var i = 0; i < dt.getNumberOfRows(); i++) {
+      var value = dt.getValue(i, column);
+      if (value !== null) {
+        var formattedValue = '<a href="' + value + '" target="_blank" style="text-decoration: none"><span class="icon icon-' + this.type + '" aria-hidden="true"></span></a>';
+        dt.setFormattedValue(i, column, formattedValue);
+      }
+    }
+  }
+
+  /**
    * Loads a google spreadsheet
    */
   PBF.ps.loadVisualisations = function () {
@@ -58,13 +79,24 @@ var PBF = PBF || {};
    * @param response
    */
   PBF.ps.initVisualisations = function (response) {
+    // initialise the dataTable
     PBF.ps.dataTable = response.getDataTable();
     PBF.ps.column.data = PBF.ps.dataTable.addColumn('number', 'Km');
-
     PBF.ps.populateColumnIndexes(PBF.ps.dataTable);
-    PBF.ps.drawMap();
-    PBF.ps.drawVisualisations(PBF.ps.dataTable);
     PBF.ps.populateBrands();
+
+    var fbFormatter = new WebsiteFormatter('facebook');
+    fbFormatter.format(PBF.ps.dataTable, PBF.ps.column.Facebook);
+    var wsFormatter = new WebsiteFormatter('external-link');
+    wsFormatter.format(PBF.ps.dataTable, PBF.ps.column.Website);
+
+    // initialise the map
+    PBF.ps.drawMap();
+
+    // display the map for the first time
+    PBF.ps.drawVisualisations(PBF.ps.dataTable);
+
+    // hide loading gif/
     $('#ps-loader').hide();
     $('#ps-content').show();
   };
