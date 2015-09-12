@@ -64,8 +64,8 @@ function makeAddress(addressColumns, values) {
  * Get row values as strings
  *
  * @param {Object} sheet
- * @param {integer} row Row to get
- * @param {integer} columns Number of columns
+ * @param {number} row Row to get
+ * @param {number} columns Number of columns
  */
 function getRow(sheet, row, columns) {
   var row = sheet.getRange(row, 1, 1, columns);
@@ -126,12 +126,14 @@ function geocodeAddresses() {
     column.postcode
   ];
 
+  var re = /^[0-9]+$/;
+
   // skip rows up to headings
   for (var i = headingRow + 1; i <= rowEnd; i++) {
     var row = getRow(sheet, i, columnEnd);
 
     // only geocode columns without coordinates
-    if (getRowColumn(row, column.lat) === '') {
+    if ((getRowColumn(row, column.lat) === '') && re.test(getRowColumn(row, column.postcode))) {
       var address = makeAddress(addressColumns, row);
       sheet.getRange(i, column.geo).setValue(address);
       var location = geocoder.geocode(address);

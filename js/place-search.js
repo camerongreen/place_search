@@ -83,7 +83,6 @@ var PBF = PBF || {};
     PBF.ps.dataTable = response.getDataTable();
     PBF.ps.column.data = PBF.ps.dataTable.addColumn('number', 'Km');
     PBF.ps.populateColumnIndexes(PBF.ps.dataTable);
-    PBF.ps.populateBrands();
 
     var fbFormatter = new WebsiteFormatter('facebook');
     fbFormatter.format(PBF.ps.dataTable, PBF.ps.column.Facebook);
@@ -95,6 +94,10 @@ var PBF = PBF || {};
 
     // display the map for the first time
     PBF.ps.drawVisualisations(PBF.ps.dataTable);
+
+    // initialise the brands select, has to be run
+    // after drawVisualisations
+    PBF.ps.populateBrands();
 
     // hide loading gif/
     $('#ps-loader').hide();
@@ -152,8 +155,8 @@ var PBF = PBF || {};
       var brands = brandsStr.split(/\s*,\s*/);
 
       for (var i = 0, l = brands.length; i < l; i++) {
-        if (PBF.ps.brands.indexOf(brands[i]) === -1) {
-          PBF.ps.brands.push(brands[i]);
+        if (PBF.ps.brands.indexOf(brands[i].trim()) === -1) {
+          PBF.ps.brands.push(brands[i].trim());
         }
       }
     }
