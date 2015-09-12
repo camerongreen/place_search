@@ -26,6 +26,9 @@ var PBF = PBF || {};
       'Lat',
       'Lat',
       'Lng',
+      'Postcode',
+      'State',
+      'Suburb',
       'Km',
       'Geocoded address',
       'Geocoding date',
@@ -88,6 +91,8 @@ var PBF = PBF || {};
     fbFormatter.format(PBF.ps.dataTable, PBF.ps.column.Facebook);
     var wsFormatter = new WebsiteFormatter('external-link');
     wsFormatter.format(PBF.ps.dataTable, PBF.ps.column.Website);
+    var addressFormatter = new google.visualization.PatternFormat('{0}, {1}, {2}, {3}');
+    addressFormatter.format(PBF.ps.dataTable, [PBF.ps.column.Street, PBF.ps.column.Suburb, PBF.ps.column.State, PBF.ps.column.Postcode]);
 
     // initialise the map
     PBF.ps.drawMap();
@@ -338,8 +343,7 @@ var PBF = PBF || {};
    */
   PBF.ps.drawDataView = function (dataView) {
     var options = {
-      allowHtml: true,
-      frozenColumns: 1
+      allowHtml: true
     };
 
     var hideColumnIndexes = [];

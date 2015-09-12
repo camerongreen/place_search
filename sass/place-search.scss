@@ -12,6 +12,16 @@ body {
   margin: 0;
 }
 
+table.google-visualization-table-table {
+  thead {
+    display: none;
+    tr {
+      background: none;
+      color: #555;
+    }
+  }
+}
+
 div.map-elements {
   div.our-stockists-form {
     border: 1px solid #e5e5e5;
