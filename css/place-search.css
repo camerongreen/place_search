@@ -16,7 +16,7 @@ body {
 
 /* line 16, ../sass/place-search.scss */
 table.google-visualization-table-table thead {
-  display: none;
+  /*display: none;*/
 }
 /* line 18, ../sass/place-search.scss */
 table.google-visualization-table-table thead tr {
