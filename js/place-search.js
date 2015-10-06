@@ -168,12 +168,17 @@ var PBF = PBF || {};
    * @param {string} brandsStr
    */
   PBF.ps.addBrands = function (brandsStr) {
+    function cleanBrand(brand) {
+      //brand = brand.replace(/[\u2018\u2019\u201A]/g, "\'");
+      return brand.trim();
+    }
     if ((brandsStr != null) && (PBF.ps.brandsStrIgnore.indexOf(brandsStr.toLowerCase()) === -1)) {
       var brands = brandsStr.split(/\s*,\s*/);
 
       for (var i = 0, l = brands.length; i < l; i++) {
-        if (PBF.ps.brands.indexOf(brands[i].trim().toLowerCase()) === -1) {
-          PBF.ps.brands.push(brands[i].trim());
+        var brand = cleanBrand(brands[i]);
+        if (PBF.ps.brands.indexOf(brand) === -1) {
+          PBF.ps.brands.push(brand);
         }
       }
     }
