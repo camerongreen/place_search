@@ -13,6 +13,8 @@ var PBF = PBF || {};
     map: null,
     chart: null,
     spreadsheet: 'https://spreadsheets.google.com/tq?key=1z-Y4EWAlkFcKZNdAHIaXvyH3MtVvYT1JnusnVEAnLew',
+    // in shopify - postcodesFile: '{{ 'postcodes.json' | asset_url }}',
+    // in shopify - markerImage: '{{ 'mm_20_white.png' | asset_url }}',
     postcodesFile: 'js/postcodes.json',
     markerImage: 'images/mm_20_white.png',
     mapZoom: 3,
@@ -59,10 +61,20 @@ var PBF = PBF || {};
    * @param {Number} column index number
    */
   WebsiteFormatter.prototype.format = function (dt, column) {
+    var re = /^[a-zA-Z]+:\/\//;
     for (var i = 0; i < dt.getNumberOfRows(); i++) {
       var value = dt.getValue(i, column);
       if (value !== null) {
-        var formattedValue = '<a href="' + value + '" target="_blank" style="text-decoration: none"><span class="icon icon-' + this.type + '" aria-hidden="true"></span></a>';
+        if (!re.test(value)) {
+          value = 'http://' + value;
+        }
+        var formattedValue = '<a href="' + value + '" target="_blank" style="text-decoration: none">';
+        if (this.type === 'facebook') {
+          formattedValue += '<span class="icon icon-' + this.type + '" aria-hidden="true"></span>';
+        } else {
+          formattedValue += this.type;
+        }
+        formattedValue += '</a>';
         dt.setFormattedValue(i, column, formattedValue);
       }
     }
@@ -89,7 +101,7 @@ var PBF = PBF || {};
 
     var fbFormatter = new WebsiteFormatter('facebook');
     fbFormatter.format(PBF.ps.dataTable, PBF.ps.column.Facebook);
-    var wsFormatter = new WebsiteFormatter('external-link');
+    var wsFormatter = new WebsiteFormatter('www');
     wsFormatter.format(PBF.ps.dataTable, PBF.ps.column.Website);
     var addressFormatter = new google.visualization.PatternFormat('{0}, {1}, {2}, {3}');
     addressFormatter.format(PBF.ps.dataTable, [PBF.ps.column.Street, PBF.ps.column.Suburb, PBF.ps.column.State, PBF.ps.column.Postcode]);
@@ -160,7 +172,7 @@ var PBF = PBF || {};
       var brands = brandsStr.split(/\s*,\s*/);
 
       for (var i = 0, l = brands.length; i < l; i++) {
-        if (PBF.ps.brands.indexOf(brands[i].trim()) === -1) {
+        if (PBF.ps.brands.indexOf(brands[i].trim().toLowerCase()) === -1) {
           PBF.ps.brands.push(brands[i].trim());
         }
       }
@@ -263,7 +275,9 @@ var PBF = PBF || {};
 
     content += '<h4>' + title + '</h4>';
     content += '<div class="iw-address">' + [display.Street, display.Suburb, display.State, display.Postcode].join(', ') + '</div>';
-    content += '<div class="iw-phone">' + display.Phone + '</div>';
+    if (display.Phone !== null) {
+      content += '<div class="iw-phone">' + display.Phone + '</div>';
+    }
     if (display.Website !== null) {
       content += '<div class="iw-url"><a href="' + display.Website + '" target="_blank">' + display.Website + '</a></div>';
     }
@@ -417,17 +431,21 @@ var PBF = PBF || {};
    * @returns {number}
    */
   PBF.ps.distance = function (lat1, lon1, lat2, lon2) {
-    var radlat1 = Math.PI * lat1 / 180;
-    var radlat2 = Math.PI * lat2 / 180;
-    var radlon1 = Math.PI * lon1 / 180;
-    var radlon2 = Math.PI * lon2 / 180;
-    var theta = lon1 - lon2;
-    var radtheta = Math.PI * theta / 180;
-    var dist = Math.sin(radlat1) * Math.sin(radlat2) + Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta);
-    dist = Math.acos(dist);
-    dist = dist * 180 / Math.PI;
-    dist = dist * 60 * 1.1515;
-    return dist * 1.609344;
+    if (!isNaN(lat1) && !isNaN(lon1) && !isNaN(lat2) && !isNaN(lon2)) {
+      var radlat1 = Math.PI * lat1 / 180;
+      var radlat2 = Math.PI * lat2 / 180;
+      var radlon1 = Math.PI * lon1 / 180;
+      var radlon2 = Math.PI * lon2 / 180;
+      var theta = lon1 - lon2;
+      var radtheta = Math.PI * theta / 180;
+      var dist = Math.sin(radlat1) * Math.sin(radlat2) + Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta);
+      dist = Math.acos(dist);
+      dist = dist * 180 / Math.PI;
+      dist = dist * 60 * 1.1515;
+      return dist * 1.609344;
+    } else {
+      return PBF.ps.circumferenceEarth;
+    }
   };
 
   /**
@@ -563,7 +581,6 @@ var PBF = PBF || {};
           obj: value
         };
       });
-      results = [];
       $('#search').autocomplete({
         minLength: 4,
         source: postcodes,

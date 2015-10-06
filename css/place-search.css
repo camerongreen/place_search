@@ -3,40 +3,41 @@
 .grid {
   font-size: 0;
 }
-
-/* line 7, ../sass/place-search.scss */
+/* line 5, ../sass/place-search.scss */
 .grid > .grid__item {
   font-size: 16px;
 }
 
-/* line 11, ../sass/place-search.scss */
-body {
-  margin: 0;
-}
-
-/* line 16, ../sass/place-search.scss */
-table.google-visualization-table-table thead {
-  /*display: none;*/
-}
-/* line 18, ../sass/place-search.scss */
+/* line 12, ../sass/place-search.scss */
 table.google-visualization-table-table thead tr {
   background: none;
   color: #555;
 }
-/* line 23, ../sass/place-search.scss */
+/* line 17, ../sass/place-search.scss */
 table.google-visualization-table-table tr td:nth-child(3) {
   white-space: nowrap;
 }
 
-/* line 29, ../sass/place-search.scss */
+/* line 22, ../sass/place-search.scss */
+div.map-elements {
+  margin-left: 1em;
+  margin-right: 1em;
+}
+/* line 25, ../sass/place-search.scss */
 div.map-elements div.our-stockists-form {
   border: 1px solid #e5e5e5;
-  padding: 1em;
-  margin-left: 1em;
+  padding: 20px;
 }
-/* line 34, ../sass/place-search.scss */
-div.map-elements div.map-container {
-  margin-right: 1em;
+/* line 29, ../sass/place-search.scss */
+div.map-elements div.our-stockists-form,
+div.map-elements #ps-map {
+  height: 437px;
+  margin-bottom: 1em;
+}
+/* line 33, ../sass/place-search.scss */
+div.map-elements div.our-stockists-form img,
+div.map-elements #ps-map img {
+  max-width: none;
 }
 
 /* line 39, ../sass/place-search.scss */
@@ -49,32 +50,28 @@ div.map-elements div.map-container {
   display: none;
 }
 
-/* line 47, ../sass/place-search.scss */
-#ps-map {
-  height: 350px;
-}
-
-/* line 51, ../sass/place-search.scss */
+/* line 48, ../sass/place-search.scss */
 #ps-data-table {
   margin: 1em;
+  margin-top: 0;
 }
-/* line 54, ../sass/place-search.scss */
+/* line 52, ../sass/place-search.scss */
 #ps-data-table > div {
   margin-top: 2em;
   width: 100%;
 }
-/* line 59, ../sass/place-search.scss */
+/* line 57, ../sass/place-search.scss */
 #ps-data-table table {
   width: 100%;
 }
 
-/* line 64, ../sass/place-search.scss */
+/* line 62, ../sass/place-search.scss */
 form button,
 form select {
   margin-right: 1ex;
 }
 
-/* line 69, ../sass/place-search.scss */
+/* line 67, ../sass/place-search.scss */
 #ps-loader {
   height: 100px;
   width: 100px;
@@ -82,20 +79,20 @@ form select {
   margin-top: 100px;
 }
 
-/* line 77, ../sass/place-search.scss */
+/* line 75, ../sass/place-search.scss */
 .ps-info-window-content img {
   max-width: 150px;
 }
-/* line 81, ../sass/place-search.scss */
+/* line 79, ../sass/place-search.scss */
 .ps-info-window-content a {
   text-decoration: none;
 }
-/* line 85, ../sass/place-search.scss */
+/* line 83, ../sass/place-search.scss */
 .ps-info-window-content td span {
   color: #BBB;
 }
 
-/* line 90, ../sass/place-search.scss */
+/* line 88, ../sass/place-search.scss */
 ul.map-heading li a {
   margin-bottom: 14px;
 }

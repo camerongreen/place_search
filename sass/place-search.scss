@@ -2,19 +2,13 @@
 
 .grid {
   font-size: 0;
-}
-
-.grid > .grid__item {
-  font-size: 16px;
-}
-
-body {
-  margin: 0;
+  & > .grid__item {
+    font-size: 16px;
+  }
 }
 
 table.google-visualization-table-table {
   thead {
-    /*display: none;*/
     tr {
       background: none;
       color: #555;
@@ -26,13 +20,19 @@ table.google-visualization-table-table {
 }
 
 div.map-elements {
+  margin-left: 1em;
+  margin-right: 1em;
   div.our-stockists-form {
     border: 1px solid #e5e5e5;
-    padding: 1em;
-    margin-left: 1em;
+    padding: 20px;
   }
-  div.map-container {
-    margin-right: 1em;
+  div.our-stockists-form,
+  #ps-map {
+    height: 437px;
+    margin-bottom: 1em;
+    img {
+      max-width: none;
+    }
   }
 }
 
@@ -44,12 +44,10 @@ div.map-elements {
   display: none;
 }
 
-#ps-map {
-  height: 350px;
-}
 
 #ps-data-table {
   margin: 1em;
+  margin-top: 0;
 
   & > div {
     margin-top: 2em;

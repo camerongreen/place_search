@@ -12,14 +12,13 @@
 <div>
   <h1>Place Search</h1>
 
-  <div id="ps-loader">
-    <img
+  <div id="ps-loader"><img
       src="//cdnjs.cloudflare.com/ajax/libs/semantic-ui/0.19.3/images/loader-large.gif"
-      alt="Loading"/>
-  </div>
+      alt="Loading"/></div>
   <div id="ps-content">
     <div class="map-elements grid">
-      <div class="grid__item desk--one-third palm--one-whole">
+      <div class="grid__item desk--one-third">
+      <!-- in shopify div class="grid__item post-large--one-third medium--one-third" -->
         <div class="our-stockists-form">
           <h1>Our Stockists</h1>
 
@@ -29,10 +28,8 @@
           <p>Find a stockist near you.</p>
 
           <form role="form">
-            <div>
-              <input type="text" name="search" id="search"
-                     placeholder="Enter suburb or postcode"/>
-            </div>
+            <div><input type="text" name="search" id="search"
+                        placeholder="Enter suburb or postcode"/></div>
             <div>
               <select name="state" id="state">
                 <option value="All">- Show by state -</option>
@@ -52,34 +49,30 @@
               </select>
             </div>
             <div>
-              <button type="button" id="reset-map">Reset options</button>
+              <button type="button" class="btn" id="reset-map">Reset options
+              </button>
             </div>
           </form>
         </div>
       </div>
-      <div class="grid__item desk--two-thirds palm--one-whole">
+      <div class="grid__item desk--two-thirds">
+        <!-- in shopify div class="grid__item post-large--two-thirds medium--two-thirds" -->
         <div class="map-container">
-          <div id="ps-map">
-          </div>
+          <div id="ps-map"></div>
         </div>
       </div>
     </div>
-    <!-- /.map-elements-->
-  </div>
+    <!-- /.map-elements--></div>
   <!-- /#ps-content -->
-  <div id="ps-data-table">
-  </div>
-  <!-- /#data-table -->
-</div>
-<!-- /.container-->
-<div id="ps-dialog-message">
-</div>
-<script
-  src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
-<script
-  src="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
-<script src="//www.google.com/jsapi"></script>
-<script src="//maps.googleapis.com/maps/api/js"></script>
-<script src="js/place-search.js"></script>
+  <div id="ps-data-table"></div>
+  <!-- /#data-table --> <!-- /.container-->
+  <div id="ps-dialog-message"></div>
+  <script
+    src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+  <script
+    src="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
+  <script src="//www.google.com/jsapi"></script>
+  <script src="//maps.googleapis.com/maps/api/js"></script>
+  <script src="js/place-search.js"></script>
 </body>
 </html>
