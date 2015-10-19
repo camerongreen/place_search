@@ -447,7 +447,7 @@ var PBF = PBF || {};
             var row = PBF.ps.getRow(dataTable, r);
             var hasBrand = PBF.ps.hasBrand(row.Brands, brand);
             var distance = PBF.ps.distance(row.Lat, row.Lng, obj.lat, obj.lng);
-            dataTable.setCell(r, PBF.ps.column.data, hasBrand || isNaN(distance) ? PBF.ps.circumferenceEarth : distance.toFixed(2));
+            dataTable.setCell(r, PBF.ps.column.data, !hasBrand || isNaN(distance) ? PBF.ps.circumferenceEarth : distance.toFixed(2));
         }
 
         dataTable.sort(PBF.ps.column.data);
