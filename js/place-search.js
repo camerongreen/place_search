@@ -531,6 +531,16 @@ var PBF = PBF || {};
             return PBF.ps.hasBrand(value, brand);
         }
 
+        /**
+         * Callback filter to check if state matches
+         *
+         * @param value
+         * @returns {boolean}
+         */
+        function checkState(value) {
+            return value.toLowerCase().trim() === state.toLowerCase();
+        }
+
         // create filters
         var filters = [];
 
@@ -568,7 +578,7 @@ var PBF = PBF || {};
             if (state !== 'All') {
                 filters.push({
                     column: PBF.ps.column.State,
-                    value: state
+                    test: checkState
                 });
             }
 
