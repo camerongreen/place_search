@@ -15,7 +15,7 @@ var PBF = PBF || {};
         spreadsheet: 'https://spreadsheets.google.com/tq?key=1z-Y4EWAlkFcKZNdAHIaXvyH3MtVvYT1JnusnVEAnLew',
         //postcodesFile: '{{ 'postcodes.json' | asset_url }}',
         //markerImage: '{{ 'mm_20_white.png' | asset_url }}',
-        //markerImage: '{{ 'home.png' | asset_url }}',
+        //homeImage: '{{ 'home.png' | asset_url }}',
         postcodesFile: 'js/postcodes.json',
         markerImage: 'images/mm_20_white.png',
         homeImage: 'images/home.png',
@@ -30,7 +30,6 @@ var PBF = PBF || {};
             'Lat',
             'Lng',
             'Postcode',
-            'State',
             'Suburb',
             'Km',
             'Geocoded address',
@@ -69,13 +68,13 @@ var PBF = PBF || {};
             if (value !== null) {
                 var formattedValue = '';
                 if (this.type === 'facebook') {
-                    formattedValue += '<i class="icon icon-facebook-sign" aria-hidden="true"></i>';
+                    formattedValue += '<i class="fa fa-facebook-official" aria-hidden="true"></i>';
                 } else if (this.type === 'fs') {
-                    formattedValue += '<i class="icon icon-food" title="Food service" aria-hidden="true"></i>';
+                    formattedValue += '<i class="fa fa-cutlery" title="Food service" aria-hidden="true"></i>';
                 } else if (this.type === 'shop') {
-                    formattedValue += '<i class="icon icon-shopping-cart" title="Shop" aria-hidden="true"></i>';
+                    formattedValue += '<i class="fa fa-shopping-cart" title="Shop" aria-hidden="true"></i>';
                 } else if (this.type === 'www') {
-                    formattedValue += '<i class="icon icon-globe" title="Online" aria-hidden="true"></i>';
+                    formattedValue += '<i class="fa fa-globe" title="Online" aria-hidden="true"></i>';
                 }
                 if (value !== 'x') {
                     if (!re.test(value)) {
@@ -307,15 +306,15 @@ var PBF = PBF || {};
 
         content += '<strong>' + title + '</strong>';
         content += '<div class="stockist">';
-        content += '<div class="address"><i class="icon icon-home"></i> ' + [display.Address, display.Suburb, display.State, display.Postcode].join(', ') + '</div>';
+        content += '<div class="address"><i class="fa fa-home"></i> ' + [display.Address, display.Suburb, display.State, display.Postcode].join(', ') + '</div>';
         if (display.Phone) {
-            content += '<div class="phone"><i class="icon icon-phone"></i> ' + display.Phone + '</div>';
+            content += '<div class="phone"><i class="fa fa-phone"></i> ' + display.Phone + '</div>';
         }
         if (display.Website) {
-            content += '<div class="url"><i class="icon icon-globe"></i> <a href="' + display.Website + '" target="_blank">' + display.Website + '</a></div>';
+            content += '<div class="url"><i class="fa fa-globe"></i> <a href="' + display.Website + '" target="_blank">' + display.Website + '</a></div>';
         }
         if (display.Facebook) {
-            content += '<div class="url"><i class="icon icon-facebook-sign"></i> <a href="' + display.Facebook + '" target="_blank">' + display.Facebook + '</a></div>';
+            content += '<div class="url"><i class="fa fa-facebook-official"></i> <a href="' + display.Facebook + '" target="_blank">' + display.Facebook + '</a></div>';
         }
         content += '</div>';
         content += '<em class="note">We always recommend contacting the store before you visit, to ensure stock availability.</em>';
