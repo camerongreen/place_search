@@ -65,16 +65,22 @@ var PBF = PBF || {};
         for (var i = 0; i < dt.getNumberOfRows(); i++) {
             var value = dt.getValue(i, column);
             if (value !== null) {
-                if (!re.test(value)) {
-                    value = 'http://' + value;
-                }
-                var formattedValue = '<a href="' + value + '" target="_blank" style="text-decoration: none">';
+                var formattedValue = '';
                 if (this.type === 'facebook') {
-                    formattedValue += '<span class="icon icon-' + this.type + '" aria-hidden="true"></span>';
-                } else {
-                    formattedValue += this.type;
+                    formattedValue += '<i class="icon icon-facebook-sign" aria-hidden="true"></i>';
+                } else if (this.type === 'fs') {
+                    formattedValue += '<i class="icon icon-food" title="Food service" aria-hidden="true"></i>';
+                } else if (this.type === 'shop') {
+                    formattedValue += '<i class="icon icon-shopping-cart" title="Shop" aria-hidden="true"></i>';
+                } else if (this.type === 'www') {
+                    formattedValue += '<i class="icon icon-globe" title="Online" aria-hidden="true"></i>';
                 }
-                formattedValue += '</a>';
+                if (value !== 'x') {
+                    if (!re.test(value)) {
+                        value = 'http://' + value;
+                    }
+                    formattedValue = '<a href="' + value + '" target="_blank" style="text-decoration: none">' + formattedValue + '</a>';
+                }
                 dt.setFormattedValue(i, column, formattedValue);
             }
         }
@@ -103,6 +109,11 @@ var PBF = PBF || {};
         fbFormatter.format(PBF.ps.dataTable, PBF.ps.column.Facebook);
         var wsFormatter = new WebsiteFormatter('www');
         wsFormatter.format(PBF.ps.dataTable, PBF.ps.column.Website);
+        wsFormatter.format(PBF.ps.dataTable, PBF.ps.column.Online);
+        var shopFormatter = new WebsiteFormatter('shop');
+        shopFormatter.format(PBF.ps.dataTable, PBF.ps.column.Shop);
+        var fsFormatter = new WebsiteFormatter('fs');
+        fsFormatter.format(PBF.ps.dataTable, PBF.ps.column.FS);
         var addressFormatter = new google.visualization.PatternFormat('{0}, {1}, {2}, {3}');
         addressFormatter.format(PBF.ps.dataTable, [PBF.ps.column.Address, PBF.ps.column.Suburb, PBF.ps.column.State, PBF.ps.column.Postcode]);
 
@@ -282,7 +293,7 @@ var PBF = PBF || {};
             content += '<div class="iw-url"><a href="' + display.Website + '" target="_blank">' + display.Website + '</a></div>';
         }
         if (display.Facebook !== null) {
-            content += '<div class="iw-url"><a href="' + display.Facebook + '" target="_blank"><span class="icon icon-facebook" aria-hidden="true"></span></a></div>';
+            content += '<div class="iw-url"><a href="' + display.Facebook + '" target="_blank"><i class="fa fa-facebook-sign" aria-hidden="true"></i></a></div>';
         }
 
         content += '</div>';
