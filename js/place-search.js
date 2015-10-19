@@ -301,22 +301,24 @@ var PBF = PBF || {};
     PBF.ps.makeInfoWindow = function (title, image, display) {
         var content = '<div class="ps-info-window-content">';
 
-        if (image !== null) {
+        if (image) {
             content += '<div class="col-sm-4"><img src="' + image + '" alt="' + title + ' Photo" class="img-responsive img-thumbnail"/></div><div class="col-sm-8">';
         }
 
-        content += '<h4>' + title + '</h4>';
-        content += '<div class="iw-address">' + [display.Address, display.Suburb, display.State, display.Postcode].join(', ') + '</div>';
-        if (display.Phone !== null) {
-            content += '<div class="iw-phone">' + display.Phone + '</div>';
+        content += '<strong>' + title + '</strong>';
+        content += '<div class="stockist">';
+        content += '<div class="address"><i class="icon icon-home"></i> ' + [display.Address, display.Suburb, display.State, display.Postcode].join(', ') + '</div>';
+        if (display.Phone) {
+            content += '<div class="phone"><i class="icon icon-phone"></i> ' + display.Phone + '</div>';
         }
-        if (display.Website !== null) {
-            content += '<div class="iw-url"><a href="' + display.Website + '" target="_blank">' + display.Website + '</a></div>';
+        if (display.Website) {
+            content += '<div class="url"><i class="icon icon-globe"></i> <a href="' + display.Website + '" target="_blank">' + display.Website + '</a></div>';
         }
-        if (display.Facebook !== null) {
-            content += '<div class="iw-url"><a href="' + display.Facebook + '" target="_blank"><i class="fa fa-facebook-sign" aria-hidden="true"></i></a></div>';
+        if (display.Facebook) {
+            content += '<div class="url"><i class="icon icon-facebook-sign"></i> <a href="' + display.Facebook + '" target="_blank">' + display.Facebook + '</a></div>';
         }
-
+        content += '</div>';
+        content += '<em class="note">We always recommend contacting the store before you visit, to ensure stock availability.</em>';
         content += '</div>';
 
         if (image !== null) {
