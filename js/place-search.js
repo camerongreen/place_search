@@ -15,8 +15,10 @@ var PBF = PBF || {};
         spreadsheet: 'https://spreadsheets.google.com/tq?key=1z-Y4EWAlkFcKZNdAHIaXvyH3MtVvYT1JnusnVEAnLew',
         //postcodesFile: '{{ 'postcodes.json' | asset_url }}',
         //markerImage: '{{ 'mm_20_white.png' | asset_url }}',
+        //markerImage: '{{ 'home.png' | asset_url }}',
         postcodesFile: 'js/postcodes.json',
         markerImage: 'images/mm_20_white.png',
+        homeImage: 'images/home.png',
         mapZoom: 3,
         mapZoomed: 15,
         brandsStrIgnore: [ // should all be in lower case
@@ -223,6 +225,25 @@ var PBF = PBF || {};
     };
 
     /**
+     * Add a homeicon
+     *
+     * @param map
+     * @param lat
+     * @param lng
+     */
+    PBF.ps.addHome = function (map, lat, lng) {
+        var myLatLng = new google.maps.LatLng(lat, lng);
+        var icon = new google.maps.MarkerImage(PBF.ps.homeImage);
+        var marker = new google.maps.Marker({
+            map: map,
+            position: myLatLng,
+            title: 'Your search location',
+            icon: icon
+        });
+
+        PBF.ps.markers.push(marker);
+    };
+    /**
      * Add a placemark to the map
      *
      * @param map
@@ -425,8 +446,8 @@ var PBF = PBF || {};
         for (var r = 0, nr = dataTable.getNumberOfRows(); r < nr; r++) {
             var row = PBF.ps.getRow(dataTable, r);
             var hasBrand = PBF.ps.hasBrand(row.Brands, brand);
-            var distance = hasBrand ? PBF.ps.distance(row.Lat, row.Lng, obj.lat, obj.lng) : PBF.ps.circumferenceEarth;
-            dataTable.setCell(r, PBF.ps.column.data, distance.toFixed(2));
+            var distance = PBF.ps.distance(row.Lat, row.Lng, obj.lat, obj.lng);
+            dataTable.setCell(r, PBF.ps.column.data, hasBrand || isNaN(distance) ? PBF.ps.circumferenceEarth : distance.toFixed(2));
         }
 
         dataTable.sort(PBF.ps.column.data);
@@ -531,9 +552,9 @@ var PBF = PBF || {};
                     test: function (value, rowNum) {
                         return rowNum < PBF.ps.numClosestVenues;
                     },
-                    column: PBF.ps.column.Lat, // dummy values
-                    minValue: -100, // dummy values
-                    maxValue: 100 // dummy values
+                    column: PBF.ps.column.Lat, // dummy value, only interested in test
+                    minValue: -100, // dummy value, only interested in test
+                    maxValue: 100 // dummy value, only interested in test
                 });
 
                 filters.push({
@@ -557,15 +578,25 @@ var PBF = PBF || {};
             }
         }
 
-        var rows = [];
-
-        if (filters.length > 0) {
-            rows = PBF.ps.dataTable.getFilteredRows(filters)
+        // Datatable doesn't have a public getrows method, so invent one
+        if (filters.length === 0) {
+            filters.push({
+                column: PBF.ps.column.Name,
+                test: function () {
+                    return true;
+                }
+            });
         }
+
+        var rows = PBF.ps.dataTable.getFilteredRows(filters)
 
         if (rows.length > 0) {
             // redraw map
             PBF.ps.drawVisualisations(PBF.ps.dataTable, rows);
+
+            if (search !== '') {
+                PBF.ps.addHome(PBF.ps.map, PBF.ps.searchObject.lat, PBF.ps.searchObject.lng)
+            }
         } else {
             PBF.ps.showNoResults();
         }
