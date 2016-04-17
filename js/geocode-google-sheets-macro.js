@@ -10,7 +10,7 @@ var headingRow = 1;
 
 // Set up column names we'll use
 var columnHeadings = {
-  street: 'Street',
+  street: 'Address',
   suburb: 'Suburb',
   state: 'State',
   brands: 'Brands',
