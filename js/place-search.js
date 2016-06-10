@@ -69,8 +69,8 @@ var PBF = PBF || {};
                 var formattedValue = '';
                 if (this.type === 'facebook') {
                     formattedValue += '<i class="fa fa-facebook-official" aria-hidden="true"></i>';
-                } else if (this.type === 'fs') {
-                    formattedValue += '<i class="fa fa-cutlery" title="Food service" aria-hidden="true"></i>';
+                } else if (this.type === 'eatery') {
+                    formattedValue += '<i class="fa fa-cutlery" title="Eatery" aria-hidden="true"></i>';
                 } else if (this.type === 'shop') {
                     formattedValue += '<i class="fa fa-shopping-cart" title="Shop" aria-hidden="true"></i>';
                 } else if (this.type === 'www') {
@@ -113,8 +113,8 @@ var PBF = PBF || {};
         wsFormatter.format(PBF.ps.dataTable, PBF.ps.column.Online);
         var shopFormatter = new WebsiteFormatter('shop');
         shopFormatter.format(PBF.ps.dataTable, PBF.ps.column.Shop);
-        var fsFormatter = new WebsiteFormatter('fs');
-        fsFormatter.format(PBF.ps.dataTable, PBF.ps.column.FS);
+        var fsFormatter = new WebsiteFormatter('eatery');
+        fsFormatter.format(PBF.ps.dataTable, PBF.ps.column.Eatery);
         var addressFormatter = new google.visualization.PatternFormat('{0}, {1}, {2}, {3}');
         addressFormatter.format(PBF.ps.dataTable, [PBF.ps.column.Address, PBF.ps.column.Suburb, PBF.ps.column.State, PBF.ps.column.Postcode]);
 
@@ -307,8 +307,8 @@ var PBF = PBF || {};
         content += '<strong>' + title + '</strong>';
         content += '<div class="stockist">';
         content += '<div class="address"><i class="fa fa-home"></i> ' + [display.Address, display.Suburb, display.State, display.Postcode].join(', ') + '</div>';
-        if (display.Phone) {
-            content += '<div class="phone"><i class="fa fa-phone"></i> ' + display.Phone + '</div>';
+        if (display['Phone number']) {
+            content += '<div class="phone"><i class="fa fa-phone"></i> ' + display['Phone number'] + '</div>';
         }
         if (display.Website) {
             content += '<div class="url"><i class="fa fa-globe"></i> <a href="' + display.Website + '" target="_blank">' + display.Website + '</a></div>';
