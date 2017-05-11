@@ -107,9 +107,9 @@ var PBF = PBF || {};
         PBF.ps.populateColumnIndexes(PBF.ps.dataTable);
 
         var fbFormatter = new WebsiteFormatter('facebook');
-        fbFormatter.format(PBF.ps.dataTable, PBF.ps.column.Facebook);
+        fbFormatter.format(PBF.ps.dataTable, PBF.ps.column.FB);
         var wsFormatter = new WebsiteFormatter('www');
-        wsFormatter.format(PBF.ps.dataTable, PBF.ps.column.Website);
+        wsFormatter.format(PBF.ps.dataTable, PBF.ps.column.Web);
         wsFormatter.format(PBF.ps.dataTable, PBF.ps.column.Online);
         var shopFormatter = new WebsiteFormatter('shop');
         shopFormatter.format(PBF.ps.dataTable, PBF.ps.column.Shop);
@@ -310,11 +310,11 @@ var PBF = PBF || {};
         if (display['Phone number']) {
             content += '<div class="phone"><i class="fa fa-phone"></i> ' + display['Phone number'] + '</div>';
         }
-        if (display.Website) {
-            content += '<div class="url"><i class="fa fa-globe"></i> <a href="' + display.Website + '" target="_blank">' + display.Website + '</a></div>';
+        if (display.Web) {
+            content += '<div class="url"><i class="fa fa-globe"></i> <a href="' + display.Web + '" target="_blank">' + display.Web + '</a></div>';
         }
-        if (display.Facebook) {
-            content += '<div class="url"><i class="fa fa-facebook-official"></i> <a href="' + display.Facebook + '" target="_blank">' + display.Facebook + '</a></div>';
+        if (display.FB) {
+            content += '<div class="url"><i class="fa fa-facebook-official"></i> <a href="' + display.FB + '" target="_blank">' + display.FB + '</a></div>';
         }
         content += '</div>';
         content += '<em class="note">We always recommend contacting the store before you visit, to ensure stock availability.</em>';
@@ -338,7 +338,8 @@ var PBF = PBF || {};
             center: {lat: PBF.ps.mapCentre.lat, lng: PBF.ps.mapCentre.lng},
             zoom: PBF.ps.mapZoom,
             minZoom: 2,
-            mapTypeId: google.maps.MapTypeId.ROADMAP
+            mapTypeId: google.maps.MapTypeId.ROADMAP,
+            key: 'AIzaSyAFdtoaP52VMBjmxjMUd0nc0jCgYEow2Jk'
         };
         PBF.ps.map = new google.maps.Map(document.getElementById('ps-map'), mapOptions);
     };
@@ -511,14 +512,14 @@ var PBF = PBF || {};
     PBF.ps.applyFilters = function (instigator) {
         // only allow either state or search, never both
         if (instigator === 'state') {
-            $('#search').val('');
+            $('#suburb').val('');
         } else if (instigator === 'search') {
             $('#state').val('All');
         }
 
         var brand = $("#brand").val();
         var state = $("#state").val();
-        var search = $("#search").val();
+        var search = $("#suburb").val();
 
         /**
          * Callback filter to check if brand matches
@@ -630,7 +631,7 @@ var PBF = PBF || {};
                     obj: value
                 };
             });
-            $('#search').autocomplete({
+            $('#suburb').autocomplete({
                 minLength: 4,
                 source: postcodes,
                 select: function (event, ui) {
@@ -639,7 +640,7 @@ var PBF = PBF || {};
                     return false;
                 },
                 focus: function (event, ui) {
-                    $('#search').val(ui.item.label);
+                    $('#suburb').val(ui.item.label);
                     return false;
                 }
             });
@@ -651,7 +652,7 @@ var PBF = PBF || {};
         $('#reset-map').click(function () {
             $('#state').val('All');
             $('#brand').val('All');
-            $('#search').val('');
+            $('#suburb').val('');
             PBF.ps.drawVisualisations(PBF.ps.dataTable);
         });
 
@@ -659,7 +660,7 @@ var PBF = PBF || {};
             PBF.ps.applyFilters(this.id);
         });
 
-        $("#search").keypress(function (e) {
+        $("#suburb").keypress(function (e) {
             var code = (e.keyCode ? e.keyCode : e.which);
             if (code == 13) { //Enter keycode
                 return false;
